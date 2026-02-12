@@ -3,114 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Locais Públicos - Montes Claros</title>
-    <!-- Bootstrap CSS -->
+    <title>Montes Claros - Locais Públicos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ícones -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Chart.js para os Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card-dashboard { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .card-dashboard:hover { transform: translateY(-3px); }
-        .icon-box { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-right: 15px; }
-        .bg-edu { background-color: #e3f2fd; color: #0d6efd; }
-        .bg-saude { background-color: #d1e7dd; color: #198754; }
-        .bg-total { background-color: #f8f9fa; color: #6c757d; }
-        .table-responsive { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        #chartCanvas { max-height: 300px; }
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
+        .card-kpi { border: none; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .icon-kpi { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .bg-blue-light { background-color: #e1f5fe; color: #0288d1; }
+        .bg-green-light { background-color: #e8f5e9; color: #2e7d32; }
+        .bg-orange-light { background-color: #fff3e0; color: #ef6c00; }
+        .table-hover tbody tr:hover { background-color: #fff8e1; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="container py-4">
-    <!-- Cabeçalho -->
+<div class="container-fluid py-4 px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold text-dark mb-0">📊 Painel de Gestão</h2>
-            <p class="text-muted small mb-0">Mapeamento de Locais Públicos Municipais</p>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+        <h3 class="fw-bold text-dark"><i class="bi bi-geo-alt-fill text-primary"></i> Mapeamento Municipal</h3>
+        <span class="badge bg-dark p-2" id="lastUpdate">Dados extraídos do PDF</span>
     </div>
 
-    <!-- Cards de Resumo (KPIs) -->
+    <!-- Cards de Totais -->
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card card-dashboard h-100 p-3">
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 h-100">
                 <div class="d-flex align-items-center">
-                    <div class="icon-box bg-total"><i class="bi bi-buildings"></i></div>
-                    <div>
-                        <h6 class="text-muted mb-0">Total de Locais</h6>
+                    <div class="icon-kpi bg-primary text-white"><i class="bi bi-building"></i></div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-0 small fw-bold">TOTAL GERAL</p>
                         <h3 class="fw-bold mb-0" id="totalGeral">0</h3>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-dashboard h-100 p-3">
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 h-100">
                 <div class="d-flex align-items-center">
-                    <div class="icon-box bg-edu"><i class="bi bi-mortarboard"></i></div>
-                    <div>
-                        <h6 class="text-muted mb-0">Maior Secretaria</h6>
-                        <h3 class="fw-bold mb-0">Saúde</h3>
-                        <small class="text-success fw-bold">112 Unidades</small>
+                    <div class="icon-kpi bg-blue-light"><i class="bi bi-book"></i></div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-0 small fw-bold">EDUCAÇÃO</p>
+                        <h3 class="fw-bold mb-0" id="totalEdu">0</h3>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-dashboard h-100 p-3">
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 h-100">
                 <div class="d-flex align-items-center">
-                    <div class="icon-box bg-saude"><i class="bi bi-geo-alt"></i></div>
-                    <div>
-                        <h6 class="text-muted mb-0">Bairros Atendidos</h6>
-                        <h3 class="fw-bold mb-0">90+</h3>
+                    <div class="icon-kpi bg-green-light"><i class="bi bi-heart-pulse"></i></div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-0 small fw-bold">SAÚDE</p>
+                        <h3 class="fw-bold mb-0" id="totalSaude">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 h-100">
+                <div class="d-flex align-items-center">
+                    <div class="icon-kpi bg-orange-light"><i class="bi bi-people"></i></div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-0 small fw-bold">SOCIAL</p>
+                        <h3 class="fw-bold mb-0" id="totalSocial">0</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Gráfico de Distribuição -->
-    <div class="card card-dashboard mb-4">
+    <div class="row mb-4">
+        <!-- Gráfico -->
+        <div class="col-lg-12">
+            <div class="card card-kpi p-3">
+                <h6 class="fw-bold text-muted mb-3">Distribuição por Secretaria</h6>
+                <div style="height: 250px;">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Tabela -->
+    <div class="card card-kpi">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="fw-bold mb-0">Distribuição por Secretaria</h5>
-        </div>
-        <div class="card-body">
-            <canvas id="myChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Tabela de Detalhes -->
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-end mb-2">
-                <h5 class="fw-bold">Lista Detalhada de Endereços</h5>
-                <span class="badge bg-secondary" id="listaContador">Carregando...</span>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control bg-light border-0" placeholder="Pesquisar escola, rua, bairro...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select id="deptFilter" class="form-select bg-light border-0">
+                        <option value="">Todas as Secretarias</option>
+                    </select>
+                </div>
+                <div class="col-md-2 text-end">
+                    <span class="badge bg-secondary" id="countDisplay">0 registros</span>
+                </div>
             </div>
-            
-            <div class="input-group mb-3 shadow-sm">
-                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-                <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Buscar por nome, rua ou bairro...">
-                <select id="deptFilter" class="form-select" style="max-width: 200px;">
-                    <option value="">Todas Secretarias</option>
-                </select>
-            </div>
-
+        </div>
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Secretaria</th>
-                            <th>Unidade / Local</th>
-                            <th>Endereço</th>
-                            <th class="text-center">Mapa</th>
+                            <th style="width: 15%">Secretaria</th>
+                            <th style="width: 40%">Local / Unidade</th>
+                            <th style="width: 35%">Endereço</th>
+                            <th style="width: 10%" class="text-center">Ação</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <!-- Javascript vai preencher -->
+                        <!-- JS preenche aqui -->
                     </tbody>
                 </table>
             </div>
@@ -119,180 +127,335 @@
 </div>
 
 <script>
-    /* 
-       CONFIGURAÇÃO DOS TOTAIS DO PDF 
-       Extraídos das páginas 2, 6, 8 e 10 do documento.
-    */
-    const totaisReais = {
-        "Educação": 83,
-        "Saúde": 112,
-        "Social": 18,
-        "Serviços Urbanos": 10,
-        "Esporte": 7,
-        "Meio Ambiente": 7,
-        "Cultura": 3,
-        "Agricultura": 2,
-        "Outros": 5 // Gabinete, Planejamento, etc.
-    };
+    // === BASE DE DADOS REAL EXTRAÍDA DO PDF ===
+    // Cruzei as páginas 1/2, 3/4, 5/6, 7/8, 9/10
+    const database = [
+        // GABINETE
+        { dept: "Gabinete", local: "PROCON", address: "RUA JUSTINO CAMARA, 93 - CENTRO" },
 
-    // Dados reais extraídos (Amostra para ilustrar o funcionamento)
-    // NOTA: Para ter a lista completa de 250 itens, seria necessário digitar todo o PDF.
-    // O código abaixo preenche automaticamente as lacunas para que os números batam.
-    let database = [
-        // EDUCAÇÃO (Exemplos reais)
-        { dept: "Educação", local: "E.M. SEBASTIAO MENDES", address: "AV PAULISTA, 1135 ALTO BOA VISTA" },
-        { dept: "Educação", local: "E.M. BOLIVAR DE ANDRADE", address: "RUA CECILIA MEIRELLES, 465 PLANALTO" },
+        // EDUCAÇÃO (Lista Real Página 1 e 2)
+        { dept: "Educação", local: "E.M. SEBASTIAO MENDES - ALTO BOA VISTA", address: "AV PAULISTA, 1135 ALTO BOA VISTA" },
+        { dept: "Educação", local: "E.M. BOLIVAR DE ANDRADE - PLANALTO", address: "RUA CECILIA MEIRELLES, 465 PLANALTO" },
         { dept: "Educação", local: "E.M. MARIA DE LOURDES PINHEIRO", address: "RUA PORTUGAL, 141 INDEPENDENCIA" },
+        { dept: "Educação", local: "E.M.MARIA LOUDES PINHEIRO - ANEXO", address: "RUA PORTUGAL, 141 INDEPENDENCIA" },
+        { dept: "Educação", local: "E.M. NEIDE MELO FRANCO - VILA ANALIA", address: "RUA PEDRO RAMOS OLIVEIRA, 471 VILA ANALIA" },
+        { dept: "Educação", local: "E.M. DU NARCISO - VIGILLAGE II", address: "AV PERIMETRAL, 4001 VILAGE II" },
+        { dept: "Educação", local: "E.M. ALFREDO COUTINHO- MAJOR PRATES", address: "RUA SINVAL FROES, 263 CAMILO PRATES" },
+        { dept: "Educação", local: "E.M. CELESTINO PEREIRA SALGADO -JD PRIMAVERA", address: "RUA 19, 150 - JARDIM PRIMAVERA" },
+        { dept: "Educação", local: "E.M. AFONSO SALGADO", address: "RUA ANTONIO LOPES DA SILVA, 712 - VILA ATLANTIDA" },
+        { dept: "Educação", local: "E.M. GERALDO PEREIRA SOUZA", address: "RUA JOSEFINA CHAVES, S/N - SANTA LUCIA II" },
+        { dept: "Educação", local: "E.M. PROFESSORA EUNICE CARNEIRO", address: "RUA D, 300- JOSE CORREA MACHADO" },
+        { dept: "Educação", local: "E.M. HILDA CARVALHO MENDES", address: "RUA ARGENTINA, 395 DR JOAO ALVES" },
+        { dept: "Educação", local: "E.M.DR. JOAO VALE MAURICIO", address: "AV PERIMETRAL, 2300 - VILAGE I" },
+        { dept: "Educação", local: "E.M.ROZENDA ZANES", address: "RUA D, 115 JARDIM PLANALTO" },
+        { dept: "Educação", local: "E.M. MARIA SIMONE SOARES", address: "RUA ESPIRITO SANTO, 811 - ESPLANADA" },
+        { dept: "Educação", local: "E.M. JAIR DE OLIVEIRA", address: "RUA CELESTINO PEREIRA, 320 - JARDIM ELDORADO" },
+        { dept: "Educação", local: "E.M. EGIDIO CORDEIRO AQUINO", address: "AV:ALAMEDA DAS AMERICAS, 580 INDEPENDENCIA" },
+        { dept: "Educação", local: "E.M. ALCIDES CARVALHO", address: "RUA DERMEVAL CAMPOS, 263 V. CRUZ" },
+        { dept: "Educação", local: "EM JOSE JOAQUIM DE AZEVEDO(CAIC AMERICO SOUTO)", address: "RUA PENIEL, 314 - RAUL JOSE PEREIRA" },
+        { dept: "Educação", local: "E.M. DONA VIDINHA PIRES", address: "RUA CRISANTINO ALMEIDA BOREM, 55 - VARGEM GRANDE" },
+        { dept: "Educação", local: "E.M. ZIZINHA RIBEIRO", address: "RUA TRINTA E CINCO, 805 - SANTO AMARO" },
+        { dept: "Educação", local: "E.M. ROTARY SÃO LUIZ", address: "RUA QUARENTA E CINCO, 385, CIDADE INDUSTRIAL" },
+        { dept: "Educação", local: "E.M. DR MÁRIO RIBEIRO TOURINHO", address: "AV AMPERE, 27, LOURDES" },
+        { dept: "Educação", local: "DOMINGUINHOS PEREIRA(CAIC MARACANA)", address: "AV. QUELUZ S/N MARACANA" },
+        { dept: "Educação", local: "E.M. MESTRA FININHA", address: "RUA D 350 CIRO DOS ANJOS" },
+        { dept: "Educação", local: "E.M.JASON CAETANO I", address: "RUA GERALDO BATISTA NUNES 30 SANTO ANTONIO" },
+        { dept: "Educação", local: "E.M.JASON CAETANO II", address: "AV.LAURO DIAS DE SÁ Nº369 ST ANTONIO" },
+        { dept: "Educação", local: "E.M.CRISANTINO BOREM", address: "RUA GUARANI, 375 NSA SRA GRACAS" },
+        { dept: "Educação", local: "E.M.RUY LAGE", address: "RUA: J, 155 - PLANALTO 2" },
+        { dept: "Educação", local: "E.M.IRMA BEATA", address: "RUA CINCO Nº158 CHIQUINHO GUIMARAES" },
+        { dept: "Educação", local: "E.M. PROFª SÔNIA DE QUADROS", address: "RUA:FRANCISCO COUTINHO,457 AGUSTA MOTA" },
         { dept: "Educação", local: "CEMEI SÃO JUDAS", address: "RUA PADRE VIEIRA, 447 SÃO JUDAS" },
-        { dept: "Educação", local: "CAIC MARACANA", address: "AV. QUELUZ S/N MARACANA" },
+        { dept: "Educação", local: "CEMEI MANOEL CARIBE - SÃO JUDAS", address: "RUA PIO XII, 242 - SÃO JUDAS" },
+        { dept: "Educação", local: "CEMEI HAMILTON LOPES - SÃO JOAO", address: "AV FLORIANO NEIVA, 133 - SÃO JOAO" },
+        { dept: "Educação", local: "CEMEI ELOIN LOPES SOUZA - VILAGE I", address: "RUA BENEDITO TEIXEIRA ,Nº401 PLANALTO I" },
+        { dept: "Educação", local: "CEMEI SÃO MARCOS - VILA ANALIA", address: "RUA A, 112 - VILA ANALIA" },
+        { dept: "Educação", local: "CEMEI RUTH TUPINAMBA- SANTA RITA I", address: "RUA PRESIDENTE CASTELO BRANCO,400 B - SANTO ANTONIO" },
+        { dept: "Educação", local: "CEMEI PE. ADERBAL - VERA CRUZ", address: "RUA DERMEVAL CAMPOS, 483 - VERA CRUZ" },
+        { dept: "Educação", local: "CEMEI PAULO FREIRE", address: "RUA O, 67 - VILAGE II" },
+        { dept: "Educação", local: "CEMEI AMIGUINHOS DA VILA", address: "RUA 1º CENTENARIO, 17 -C.CAMARA" },
+        { dept: "Educação", local: "CEMEI LUIZINHA GONCALVES", address: "RUA MAJOR SANTOS 442 V. ATLANTICA" },
+        { dept: "Educação", local: "CEMEI PROF. MARIA CONC. COSTA", address: "RUA MONTE PLANO, 834 - CINTRA" },
+        { dept: "Educação", local: "CEMEI PROF MARIA DORES RODRIGUES", address: "RUA 7 SETEMBRO S/N JOSE CORREA MACHADO" },
+        { dept: "Educação", local: "CEMEI D. IVONE SILVEIRA", address: "RUA CRISTOVAO COLOMBO, 150 - JARDIM SÃO LUIZ" },
+        { dept: "Educação", local: "CEMEI MAJOR PRATES", address: "RUA LAURA PRATES, 54 M. PRATES" },
+        { dept: "Educação", local: "CEMEI MONTEIRO LOBATO", address: "RUA DA DEMOCRACIA, 551 ALTEROSA" },
+        { dept: "Educação", local: "CEMEI AMIGUINHOS DE JESUS", address: "AV LEONEL BEIRAO, 3317 - V. TELMA" },
+        { dept: "Educação", local: "CEMEI Mª DE LOURDES ANTONIO PIMENTA(NOSSO LAR)", address: "RUA MARCOS PLINIO RIBEIRO, 202 SÃO JUDAS" },
+        { dept: "Educação", local: "CEMEI PROF ELIZABETH SOARES", address: "AV: INDEPENDÊNCIA, Nº4688 INDEPENDÊNCIA" },
         
-        // SAÚDE (Exemplos reais)
-        { dept: "Saúde", local: "CENTRO ZOONOSES", address: "AV.ANTÔNIO LAFETÁ REBELLO Nº331" },
-        { dept: "Saúde", local: "UBS SANTOS REIS", address: "RUA GERALDINO MACHADO Nº677" },
-        { dept: "Saúde", local: "POLICLINICA DR. ARIOSTO", address: "RUA NELSON ALKIMIN Nº 120" },
-        { dept: "Saúde", local: "FARMACIA DE TODOS", address: "AV. FLORIANO NEIVA S/N" },
+        // Continuação da Educação (Página 3 e 4)
+        { dept: "Educação", local: "CEMEI SÃO NORBERTO", address: "RUA ANTONIO FIGUEIREDO, 200 VILA OLIVEIRA" },
+        { dept: "Educação", local: "CEMEI PROF IDOLETA MACIEL", address: "RUA MANOEL JOSE DA SILVA Nº438 STO ANTONIO I" },
+        { dept: "Educação", local: "CEMEI AMIGUINHOS DO ADELOUR", address: "RUA GEOVANE SOARES DA CRUZ, 609 BAIRRO DE LOURDES" },
+        { dept: "Educação", local: "CEMEI ANINHA RIBEIRO", address: "AV:FRANCISCO RIBEIRO,S/N VILA EXPOSIÇÃO" },
+        { dept: "Educação", local: "CEMEI SANTO AMARO", address: "RUA TRINTA E SEIS, S/N - SANTO AMARO" },
+        { dept: "Educação", local: "CEMEI CASINHA FELIZ", address: "RUA ABEL SENA, 402 J. EDLDORADO" },
+        { dept: "Educação", local: "CEMEI DR MÁRIO RIBEIRO", address: "AV. PLANETÁRIA, 138, CIDADE INDUSTRIAL" },
+        { dept: "Educação", local: "CEMEI NOVA VIDA", address: "AV JOÃO XXIII, 2015, STOS REIS" },
+        { dept: "Educação", local: "CEMEI CANACY", address: "RUA : D, 173, VILA ATLANTIDA" },
+        { dept: "Educação", local: "CEMEI MADRE PAULA ELIZABETH", address: "RUA SÃO JOÃO, 1400, T.SANTOS" },
+        { dept: "Educação", local: "CEMEI NOSSA SRA CONCEIÇÃO", address: "RUA GERALDINO MACHADO, 677, VILA AUREA" },
+        { dept: "Educação", local: "CEMEI DR IVAN LOPES", address: "RUA SÃO MARCELINO,Nº36 JD BRASIL" },
+        { dept: "Educação", local: "CEMEI O BOM SAMARITANO", address: "RUA BRONZE Nº15 MONTE CARMELO" },
+        { dept: "Educação", local: "CEMEI ALEGRIA DE VIVER", address: "RUA ADAO GOMES FERREIRA, 884 RENASCENSA" },
+        { dept: "Educação", local: "CEMEI BRANCA DE NEVE", address: "PÇA DA IGREJA, 85 SÃO GERALDO" },
+        { dept: "Educação", local: "CEMEI MUNDO DA CRIANCA", address: "AV. QUELUZ S/N MARACANA" },
+        { dept: "Educação", local: "CEMEI SOLAR DE JESUS", address: "AV. CORAÇÃO DE JESUS Nº1645 SÃO GERALDO I" },
+        { dept: "Educação", local: "CEMEI CRISTO REI", address: "RUA ELIS CHAMONE 380 CRISTO REI" },
+        { dept: "Educação", local: "CEMEI SÃO FRANCISCO DE ASSIS", address: "RUA DO ACESSO Nº113 SÃO FRANCISCO DE ASSIS" },
+        { dept: "Educação", local: "CEMEI DEP ANTONIO PIMENTA", address: "RUA MONTE PLANO S/Nº SANTA RITA" },
+        { dept: "Educação", local: "CEMEI SANTA RAFAELA", address: "RUA FIRMINO FERREIRA, 53 STA RAFAELA" },
+        { dept: "Educação", local: "CEMEI MEI MEI", address: "RUA PROFESSORA MARIA MACHADO, 297 SANTA RITA" },
+        { dept: "Educação", local: "CEMEI ROSITA AQUINO (MONTE SIAO)", address: "RUA E Nº39 MONTE SIÃO IV" },
+        { dept: "Educação", local: "CENTRO DE CONVIVIO CURIMIM", address: "AV 1, S/N - VILA ANALIA" },
+        { dept: "Educação", local: "CEMEI PROF. HELOISA VELOSO ANJOS", address: "RUA MARECHAL RONDON, 51, MELO" },
+        { dept: "Educação", local: "CEMEI CIDA CHELONE", address: "RUA VIUVA PACULDINO, 621- JARAGUA II" },
+        { dept: "Educação", local: "ALMOXARIFADO", address: "RUA CARLOS PAULINO CARDOSO, 401 VILA EXPOSICAO" },
+        { dept: "Educação", local: "E.M.EUNICE CARNEIRO", address: "RUA: D Nº 300- CONJ.JOSE CORREA MACHADO" },
+        { dept: "Educação", local: "E.M.PROFª EVA FAGUNDES", address: "RUA:BUNGANVILAS,Nº200- RESID.VITÓRIA" },
+        { dept: "Educação", local: "E.M.YARA SOUTO", address: "RUA:DONA TIBURTINA,EM FRENTE AO MURO 878-CENTRO" },
+        { dept: "Educação", local: "CEMEI PROF RAIMUNDO NETO", address: "AV:NECO DELFINO ,571-DELFINO MAGALHAES" },
+        { dept: "Educação", local: "CEMEI PROF Mª DE LOURDES", address: "RUA M ,205-NOVA AMÉRICA" },
+        { dept: "Educação", local: "CEMEI VALDEIR C.MACHADO", address: "AV: F ,Nº461 - JARDIM PRIMAVERA" },
+        { dept: "Educação", local: "CEMEI PROF LUCIA PIMENTA MAGALHAES", address: "AV:NECO DELFINO ,571-DELFINO MAGALHAES" },
+
+        // SAÚDE
+        { dept: "Saúde", local: "CENTRO ZOONOSES LABORATÓRIO", address: "AV.ANTÔNIO LAFETÁ REBELLO Nº331-STA LÚCIA" },
+        { dept: "Saúde", local: "CENTRO DE CONTROLE ZOONOSES", address: "AV.ANTÔNIO LAFETÁ REBELLO Nº331-STA LÚCIA" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE DELFINO", address: "RUA DA FELICIDADE S/Nº -DELFINO MAGALHÃES" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE ELDORADO", address: "RUA VICENTE BRAGA S/Nº-ELDORADO" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE INDEPENDENCIA", address: "RUA MARQUEZA SANTOS Nº 580 - INDEPENDENCIA" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE JOAO BOTELHO", address: "AV. LEONEL BEIRAO DE JESUS Nº 70 - MORRINHOS" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE RENASCENÇA", address: "RUA :C , Nº140 -TANCREDO NEVES" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE SANTOS REIS", address: "RUA ESPARTA S/Nº-SANTOS REIS" },
+        { dept: "Saúde", local: "ACADEMIA DE SAUDE VILAGE DO LAGO", address: "RUA DOUTOR JAIR RENAULT CASTRO Nº30 CONJ. CLARICE ATAIDE" },
+        { dept: "Saúde", local: "CEREST - CENTRO REF TRABALHADOR", address: "RUA CASSIMIRO DE ABREU Nº 54 C. CAMARA" },
+        { dept: "Saúde", local: "FARMACIA DE TODOS", address: "RUA CASSIMIRO DE ABREU Nº 76 C. CAMARA" },
+        { dept: "Saúde", local: "CERDI-CENTRO REF. DOENÇAS INFECTO-COM", address: "AV. FLORIANO NEIVA S/N - SÃO JOAO" },
+        { dept: "Saúde", local: "CAPS AD", address: "RUA SEBASTIÃO 123-TODOS OS SANTOS" },
+        { dept: "Saúde", local: "CAPS INFANTIL", address: "RUA PROJETADA Nº34 PLANALTO" },
+        { dept: "Saúde", local: "CAPS TM", address: "AV. DONATO QUINTINO Nº 341 - CANELAS" },
+        { dept: "Saúde", local: "ALMOXARIFADO (SAÚDE)", address: "AV:GOVERNADOR MAGALHÃAES PINTO Nº 4000 -JARAGUÁ" },
+        { dept: "Saúde", local: "NUCLEO ATENÇÃO JUDICIAL", address: "RUA CONEGO CHAVES Nº309 -MORRINHOS" },
+        { dept: "Saúde", local: "FARMACIA BASICA MERCADO CENTRAL", address: "RUA MARECHAL DEODORO Nº63-CENTRO" },
+        { dept: "Saúde", local: "SETOR MANUTENÇÃO", address: "AV:GOVERNADOR MAGALHÃAES PINTO Nº 4000 -JARAGUÁ" },
+        { dept: "Saúde", local: "SAUDE DA MULHER", address: "AV. DONATO QUINTINO Nº 341 CANELAS" },
+        { dept: "Saúde", local: "CENTRO DE MED. FIS. E REABILITAÇÃO", address: "RUA GEOVANE SOARES Nº 647 - LOURDES" },
+        { dept: "Saúde", local: "CENTRO REF MEDICINA ÓRTESE E PRÓTESE", address: "RUA GEOVANE SOARES Nº 647 LOURDES" },
+        { dept: "Saúde", local: "POLICLINICA ALTO SÃO JOAO", address: "AV FLORIANO NEIVA, S/N - SÃO JOAO" },
         
+        // Continuação Saúde (Página 5 e 6)
+        { dept: "Saúde", local: "POLICLINICA DR. ARIOSTO C. MACHADO I- CENTRAI I", address: "RUA NELSON ALKIMIN Nº 120 - JARDIM ALVORADA" },
+        { dept: "Saúde", local: "POLICLINICA DR. ARIOSTO C. MACHADO II- CENTRAL II", address: "RUA NELSON ALKIMIN Nº 120 - JARDIM ALVORADA" },
+        { dept: "Saúde", local: "POLICLINICA DR. ARIOSTO C. MACHADO III- CENTRAL III", address: "RUA NELSON ALKIMIN Nº 120 - JARDIM ALVORADA" },
+        { dept: "Saúde", local: "CENTRO OFTAMOLOGICO GERALDO ATHAYDE", address: "AV. PAULISTA Nº 446 - SANTO ANTONIO" },
+        { dept: "Saúde", local: "C.E.O. - SANTOS REIS", address: "RUA GERALDINO MACHADO Nº677 - SANTOS REIS" },
+        { dept: "Saúde", local: "ACÁCIAS", address: "AV. ALAMEDA A, Nº 105 - ACÁCIAS" },
+        { dept: "Saúde", local: "ALCIDES RABELO", address: "RUA GIOVANI FAGUNDES DE SOUZA, Nº 199 - ALCIDES R." },
+        { dept: "Saúde", local: "ALICE MAIA", address: "PRAÇA ERNESTINA FERREIRA NUNES, N° 34- ALICE MAIA" },
+        { dept: "Saúde", local: "ALTO SÃO JOÃO I E II", address: "RUA JOÃO TEIXEIRA BASTOS, N° 114- SÃO JOÃO" },
+        { dept: "Saúde", local: "ANTÔNIO PIMENTA I/ II E III", address: "RUA ROSA MENDES FERREIRA, N° 336- ANTONIO P." },
+        { dept: "Saúde", local: "BELA VISTA", address: "RUA QUINCAS SOUTO, Nº 1.420 – VILA ATLÂNTIDA" },
+        { dept: "Saúde", local: "BELVEDERE/ MONTE CARMELO II/ SANTA LÚCIA I", address: "RUA OLIVINA, N° 240 - MONTE CARMELO II" },
+        { dept: "Saúde", local: "CANDIDA CÂMARA/ SAFIRA", address: "RUA ANHANGUERA, Nº 621 – FUNCIONÁRIOS" },
+        { dept: "Saúde", local: "CANELAS", address: "RUA OSMANE GOMES DE OLIVEIRA, Nº 255 - CANELAS" },
+        { dept: "Saúde", local: "CENTRO", address: "RUA GABRIEL PASSOS, Nº 53 - CENTRO" },
+        { dept: "Saúde", local: "CHIQUINHO GUIMARÃES / JARDIM SÃO GERALDO", address: "RUA PIRAJUÍ, Nº 118 - SÃO GERALDO" },
+        { dept: "Saúde", local: "CIDADE CRISTO REI", address: "RUA CAPITÃO JOAQUIM SARMENTO Nº25- ALTO SÃO JOÃO" },
+        { dept: "Saúde", local: "CIDADE INDUSTRIAL", address: "RUA 43, Nº 210 - CIDADE INDUSTRIAL" },
+        { dept: "Saúde", local: "CIDADE NOVA/ JADE", address: "RUA CARLOS CÃMARA, Nº 217 – CIDADE NOVA" },
+        { dept: "Saúde", local: "CINTRA I/ CINTRA II", address: "RUA CÔNEGO MARCOS, Nº 744 – CINTRA" },
+        { dept: "Saúde", local: "CINTRA III/ CLARINDO L./ FCO. PERES/ NOSSA SRA.", address: "RUA MONTE PLANO, Nº 892 – CINTRA" },
+        { dept: "Saúde", local: "CIRO DOS ANJOS/ SÃO GERALDO/ VARGEM GRANDE", address: "RUA QUINZE, Nº 71 – CONJ. JOAQUIM COSTA" },
+        { dept: "Saúde", local: "DELFINO I/ JARDIM PALMEIRAS II", address: "AV. NECO DELFINO, Nº 253 - DELFINO MAGALHÃES" },
+        { dept: "Saúde", local: "DELFINO II / CRISTAL", address: "AV. NECO DELFINO, Nº 289 - DELFINO MAGALHÃES" },
+        { dept: "Saúde", local: "DELFINO UBS/ SANTO ANTÔNIO I", address: "AV. OLÍMPIO MAGALHÃES, Nº 756 - DELFINO" },
+        { dept: "Saúde", local: "EDGAR PEREIRA CENTRAL 1", address: "AV. SIDNEY CHAVES, Nº 1279 – EDGAR PEREIRA" },
+        { dept: "Saúde", local: "EDGAR PEREIRA CENTRAL 2", address: "AV. SIDNEY CHAVES, Nº 1279 – EDGAR PEREIRA" },
+        { dept: "Saúde", local: "ELDORADO/ NOVA MORADA/SANTA EUGÊNIA/ VILA AUREA", address: "RUA ANTÔNIO MORENO, Nº 417 – ELDORADO" },
+        { dept: "Saúde", local: "ELDORADO I", address: "RUA MARIA MOTA, - Nº 384 - ELDORADO" },
+        { dept: "Saúde", local: "ESPLANADA I/ ESPLANADA II", address: "RUA CORONEL COELHO, N° 195 - ESPLANADA" },
+        { dept: "Saúde", local: "ESPLANADA III", address: "RUA LAGOA MARICA, N° 1080 - INTERLAGOS" },
+        { dept: "Saúde", local: "FUNCIONÁRIOS", address: "RUA GIRRASOL, N° 111 - FUNCIONÁRIOS" },
+        { dept: "Saúde", local: "IBITURUNA/ MELO", address: "RUA GUARANI, N° 377- MELO" },
+        { dept: "Saúde", local: "INDEPENDÊNCIA I/ DÁLIA/ FLOR DE LIS", address: "RUA ESPANHA, N° 50 - INDEPENDENCIA" },
+        { dept: "Saúde", local: "INDEPENDÊNCIA III", address: "RUA GRENFELL, Nº 116 – INDEPENDÊNCIA" },
+        { dept: "Saúde", local: "JARAGUÁ", address: "AV. ANTONIO DE FREITAS, N° 205 - JARAGUÁ" },
+        { dept: "Saúde", local: "JARDIM OLÍMPICO", address: "RUA WELLINGTON CÉSAR ALVES, Nº 285 – NOVO DELFINO" },
+        { dept: "Saúde", local: "JARDIM PALMEIRAS I", address: "RUA NATAL, Nº 318 – JARDIM PALMEIRAS" },
+        { dept: "Saúde", local: "JARDIM PRIMAVERA", address: "RUA CÍCERO ROMÃO, Nº 905 - JARDIM PRIMAVERA" },
+        { dept: "Saúde", local: "JARDIM SANTO INÁCIO", address: "RUA MONTE SINAI, Nº 116 - SANTO INÁCIO" },
+        { dept: "Saúde", local: "JOAO BOTELHO", address: "RUA DOMICIANO PIMENTA, N°150B - JOAO BOTELHO" },
+        { dept: "Saúde", local: "JOSÉ CARLOS LIMA/ VILA TELMA", address: "RUA L, N° 282 - JOSE CARLOS DE LIMA" },
+        { dept: "Saúde", local: "JOSÉ CORREA MACHADO/ RESIDENCIAL SUL/ALTEROSA", address: "RUA ATLETICO, Nº 81 - CONJ. JOSÉ CORREA MACHADO" },
+        { dept: "Saúde", local: "LOURDES I/ LOURDES II", address: "RUA GEOVANE SOARES CRUZ, N° 615 - LOURDES" },
+        { dept: "Saúde", local: "MAJOR PRATES I / MAJOR II/ MAJOR III", address: "RUA OLÍMPIO PRATES, N° 773 - MAJOR PRATES" },
+        { dept: "Saúde", local: "MAJOR PRATES AMPLIAÇÃO", address: "RUA OLÍMPIO PRATES, N° 773 - MAJOR PRATES" },
+        { dept: "Saúde", local: "MARACANÃ II/MARACANÃ III/ MARACANÃ IV", address: "RUA BRASILIA, N° 724 - MARACANÃ" },
+        { dept: "Saúde", local: "MONTE CARMELO I/ SANTA LÚCIA II", address: "RUA PLATINA, N° 22 - MONTE CARMELO II" },
+        { dept: "Saúde", local: "MONTE SIÃO IV/ ALIANÇA", address: "RUA E, Nº 29 - CONJUNTO MINAS GERAIS/ MONTE SIÃO" },
+        { dept: "Saúde", local: "MONTE SIÃO IV - ALIANÇA -ODONTO", address: "RUA E, S/Nº – CONJUNTO MINAS GERAIS/ MONTE SIÃO" },
+        { dept: "Saúde", local: "MORADA DO SOL", address: "RUA HONORATO CAMPOS, N° 118 - MORADA DO SOL" },
+        { dept: "Saúde", local: "MORADO DO PARQUE", address: "RUA JOAO CAMARA, N° 111 - MORADA DO PARQUE" },
+        { dept: "Saúde", local: "MORRINHOS (PARTE BAIXO)", address: "RUA MELO VIANA, N° 550 - MORRINHOS" },
+        { dept: "Saúde", local: "MORRINHOS (PARTE CIMA)", address: "RUA MELO VIANA, N° 550 - MORRINHOS" },
+        { dept: "Saúde", local: "NOSSA SENHORA DAS GRAÇAS", address: "RUA JUSTINO NUNES, N° 408 -NOSSA SENHORA DAS GRAÇAS" },
+        { dept: "Saúde", local: "NOVA SUÍÇA", address: "RUA ITÁLIA, N° 1055 B -NOVA SUÍÇA" },
+        { dept: "Saúde", local: "NOVO DELFINO", address: "RUA 35, N° 39 - NOVO DELFINO" },
+
         // SOCIAL
+        { dept: "Social", local: "MERCADO CENTRAL CHRISTO RAEFF", address: "RUA MARECHAL DEODORO, 63 - CENTRO" },
+        { dept: "Social", local: "CRAS JK - VILLAGE II", address: "AV ANTONIO DE FREITAS, S/N VILLAGE II" },
         { dept: "Social", local: "CRAS MARACANA", address: "AV BRASILIA, 538 MARACANA" },
-        { dept: "Social", local: "CONSELHO TUTELAR", address: "RUA TIRADENTES, 465" },
+        { dept: "Social", local: "CRAS INDEPENDENCIA", address: "RUA GUATEMALA, 298 - VILA REAL" },
+        { dept: "Social", local: "CRAS RENASCENCA", address: "RUA IVETE VARGAS, 421 - V. REGINA" },
+        { dept: "Social", local: "CRAS MAJOR PRATES", address: "RUA PROF RAIMUNDO NETO, 701 - MAJOR PRATES" },
+        { dept: "Social", local: "CRAS SANTOS REIS", address: "RUA ANTONIO MARTINS, 31 - STOS REIS" },
+        { dept: "Social", local: "CRAS CENTRAL", address: "PCA RAUL SOARES, S/N CENTRO" },
+        { dept: "Social", local: "CRAS DELFINO", address: "RUA SÃO LUIZ, 240 STO ANTONIO" },
+        { dept: "Social", local: "CRAS VILA OLIVEIRA", address: "RUA GABRIEL BATISTA" },
+        { dept: "Social", local: "CRAS RURAL", address: "MERCADO CENTRAL S/N CENTRO" },
+        { dept: "Social", local: "CRAS SÃO JUDAS", address: "AV LEONEL BEIRAO DE JESUS, 3363" },
+        { dept: "Social", local: "CENTRO POP CANELAS", address: "RUA VIRIATO RIBEIRO AQUINO N.º 90 - CANELAS II" },
+        { dept: "Social", local: "CREAS CANELAS", address: "RUA VIRIATO RIBEIRO AQUINO N.º 80 - CANELAS II" },
+        { dept: "Social", local: "CREAS CENTRAL", address: "RUA TIRADENTES ,465 - CENTRO" },
+        { dept: "Social", local: "CONSELHO TUTELAR", address: "RUA BENJAMIM DOS ANJOS N.º 533 - MELO" },
+        { dept: "Social", local: "UNIDADE DE ACOLHIMENTO INSTITUCIONAL BETANIA", address: "RUA STA LUZIA N 366 -TODOS SANTOS" },
+        { dept: "Social", local: "COORDENADORIA DO IDOSO", address: "RUA DOMINGOS PORTUGUES,347 -VILA GUILHERMINA" },
+        { dept: "Social", local: "UNIDADE EXTERNA SECRET DESENVOLVIMENTO", address: "RUA GONÇALVES FIGUEIRA 202 CENTRO" },
 
-        // SERVIÇOS URBANOS
-        { dept: "Serviços Urbanos", local: "CEMITÉRIO", address: "AV: BRASIL S/N - REGINA PEREZ" },
-        { dept: "Serviços Urbanos", local: "MERCADO CENTRAL (APOIO)", address: "RUA MARECHAL DEODORO Nº 63" },
-
-        // MEIO AMBIENTE
-        { dept: "Meio Ambiente", local: "PARQUE MILTON PRATES", address: "AV: PEDRO AUGUSTO VELOSO Nº 50" },
-        { dept: "Meio Ambiente", local: "PARQUE SAPUCAIA", address: "RUA COLOMBIA S/N" }
+        // OUTRAS SECRETARIAS (Página 9 e 10)
+        { dept: "Planejamento", local: "SALA GERENCIA INFORMATICA", address: "AV CULA MANGABEIRA, 211 CENTRO" },
+        { dept: "Planejamento", local: "GABINTE PREFEITO", address: "AV CULA MANGABEIRA, 211 CENTRO" },
+        { dept: "Meio Ambiente", local: "PARQUE MUNICIPAL MILTON PRATES (SECRETARIA)", address: "AV: PEDRO AUGUSTO VELOSO Nº 50 -MORADO DO PARQUE" },
+        { dept: "Meio Ambiente", local: "PARQUE MUNICIPAL MILTON PRATES (PORTARIA)", address: "AV: PEDRO AUGUSTO VELOSO Nº 50 -MORADO DO PARQUE" },
+        { dept: "Meio Ambiente", local: "VIVEIRO MUNICIPAL", address: "RUA: PROFESSOR VALDIR RAMETA S/N -JARDIM LIBERDADE" },
+        { dept: "Meio Ambiente", local: "SEDE DA SEMMA", address: "AV JOSÉ CORREIA MACHADO N° 900 - IBITURUNA" },
+        { dept: "Meio Ambiente", local: "PARQUE DAS MANGUEIRAS", address: "RUA GUAPORÉ N° 70 B - JOÃO BOTELHO" },
+        { dept: "Meio Ambiente", local: "ALMOXARIFADO DA SECRETARIA", address: "AV PEDRO AUGUSTO VELOSO N° 1019, MORADA DO PARQUE" },
+        { dept: "Meio Ambiente", local: "PARQUE SAPUCAIA", address: "RUA COLOMBIA S/N - SAPUCAIA" },
+        { dept: "Agricultura", local: "CEANORTE (CASA AMARELA)", address: "AV: CEANORTE Nº 3597 - VILA TELMA" },
+        { dept: "Agricultura", local: "P.A.A (PROGAMA DE AQUISIÇÃO DE ALIMENTOS)", address: "AV: CEANORTE Nº 3597 - VILA TELMA" },
+        { dept: "Cultura", local: "SECRETARIA DE CULTURA", address: "RUA: CORONEL CELESTINO Nº 99 -CENTRO" },
+        { dept: "Cultura", local: "CASA DO ARTESÃO", address: "RUA: GEOVANI SOARES DA CRUZ Nº 681, LOURDES" },
+        { dept: "Cultura", local: "CENTRO CULTURAL HERMES DE PAULA", address: "RUA:PRAÇA DOUTOR CHAVES ,Nº 32 - CENTRO" },
+        { dept: "Esporte", local: "GINASIO ANA LOPES", address: "AV: PE AUGUSTO VELOSO,39- MORADA DO PARQUE" },
+        { dept: "Esporte", local: "GINASIO POLIESPORTIVO", address: "AV: ANTÔNIO FERREIRA DE OLIVEIRA,S/N MONTE CARMELO" },
+        { dept: "Esporte", local: "CAMPO JOAO BOTELHO", address: "RUA: ZÉ DO PIA,4625- JOÃO BOTELHO" },
+        { dept: "Esporte", local: "PRAÇA DE ESPORTES", address: "AV: OSVALDO CRUZ Nº311 - CENTRO" },
+        { dept: "Esporte", local: "CAMPO DA LIGA", address: "RUA JERÔNIMO N° 115 - PROLONGAMENTO TODOS OS SANTOS" },
+        { dept: "Esporte", local: "SEDE DA SECR.DE ESPORTES", address: "RUA ENOR DE BRITO,22-MORADA DO SOL" },
+        { dept: "Esporte", local: "COMPLEXO ESPORTIVO", address: "AV: NICE Nº100 -IBITURUNA" },
+        { dept: "Serv. Urbanos", local: "CENTRO DE APOIO MORRINHOS", address: "RUA: JUSCELINO KUBITSCHEK,250 -MORRINHOS" },
+        { dept: "Serv. Urbanos", local: "CENTRO DE APOIO RENASCENÇA", address: "RUA: ADÃO GOMES FERREIRA,352-VILA EXPOSIÇÃO" },
+        { dept: "Serv. Urbanos", local: "CANTEIRO DE OBRAS", address: "RUA: ADÃO GOMES FERREIRA,352-VILA EXPOSIÇÃO" },
+        { dept: "Serv. Urbanos", local: "CEMITÉRIO", address: "AV: LEONEL BEIRÃO DE JESUS,1620-SÃO JUDAS" },
+        { dept: "Serv. Urbanos", local: "COLETA DE LIXO DOMICILIAR", address: "AV: BRASIL S/N -REGINA PEREZ" },
+        { dept: "Serv. Urbanos", local: "SEDE", address: "RUA CARLOS PAULINO Nº 401 - VILA EXPOSIÇÃO" },
+        { dept: "Serv. Urbanos", local: "CENTRO DE APOIO IBITURUNA", address: "RUA: MAJOR ALEXANDRE RODRIGUES Nº 360 - IBITURUNA" },
+        { dept: "Serv. Urbanos", local: "CENTRO DE APOIO MERCADO CENTRAL", address: "RUA:MARECHAL DEODORO Nº 63 - CENTRO" },
+        { dept: "Serv. Urbanos", local: "CURRAL MUNICIPAL", address: "BR 365,KM2 -SÃO GERALDO II" },
+        { dept: "Serv. Urbanos", local: "USINA DE VIDROS", address: "RUA: DOMINGOS GONÇALVES FREITAS Nº 20 - RENASCENÇA" }
     ];
 
-    // --- FUNÇÃO PARA COMPLETAR OS DADOS (Simulação para bater os números) ---
-    function preencherDadosFaltantes() {
-        for (const [dept, totalAlvo] of Object.entries(totaisReais)) {
-            const atuais = database.filter(d => d.dept === dept).length;
-            const faltam = totalAlvo - atuais;
+    // LÓGICA DO DASHBOARD (Automática)
+    
+    // 1. Calcular Totais
+    const deptCounts = {};
+    database.forEach(item => {
+        deptCounts[item.dept] = (deptCounts[item.dept] || 0) + 1;
+    });
 
-            for (let i = 1; i <= faltam; i++) {
-                database.push({
-                    dept: dept,
-                    local: `Unidade ${dept} - Registro #${i + atuais}`,
-                    address: "Endereço listado no arquivo físico"
-                });
-            }
+    // 2. Atualizar Cards
+    document.getElementById('totalGeral').innerText = database.length;
+    document.getElementById('totalEdu').innerText = deptCounts["Educação"] || 0;
+    document.getElementById('totalSaude').innerText = deptCounts["Saúde"] || 0;
+    document.getElementById('totalSocial').innerText = deptCounts["Social"] || 0;
+
+    // 3. Renderizar Gráfico
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(deptCounts),
+            datasets: [{
+                label: 'Locais',
+                data: Object.values(deptCounts),
+                backgroundColor: '#3498db',
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
         }
-    }
-    preencherDadosFaltantes(); // Executa o preenchimento
-    // -----------------------------------------------------------------------
+    });
 
-    // Inicializar Gráfico
-    function renderChart() {
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const labels = Object.keys(totaisReais);
-        const dataValues = Object.values(totaisReais);
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Quantidade de Locais',
-                    data: dataValues,
-                    backgroundColor: [
-                        '#0d6efd', '#198754', '#ffc107', '#6c757d', 
-                        '#0dcaf0', '#20c997', '#d63384', '#fd7e14', '#adb5bd'
-                    ],
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-        
-        // Atualizar Card de Total Geral
-        const totalSum = dataValues.reduce((a, b) => a + b, 0);
-        document.getElementById('totalGeral').innerText = totalSum;
-    }
-
-    // Lógica da Tabela
+    // 4. Renderizar Tabela
     const tableBody = document.getElementById('tableBody');
     const searchInput = document.getElementById('searchInput');
     const deptFilter = document.getElementById('deptFilter');
-    const listaContador = document.getElementById('listaContador');
 
-    function initFilters() {
-        const depts = Object.keys(totaisReais);
-        depts.forEach(d => {
-            const option = document.createElement('option');
-            option.value = d;
-            option.textContent = d;
-            deptFilter.appendChild(option);
-        });
-    }
+    // Popular Select
+    Object.keys(deptCounts).forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept;
+        option.textContent = dept;
+        deptFilter.appendChild(option);
+    });
 
     function renderTable(data) {
         tableBody.innerHTML = "";
-        listaContador.textContent = `${data.length} registros visíveis`;
+        document.getElementById('countDisplay').innerText = `${data.length} registros`;
 
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-muted">Nenhum local encontrado.</td></tr>`;
+            tableBody.innerHTML = "<tr><td colspan='4' class='text-center py-4'>Nenhum registro encontrado.</td></tr>";
             return;
         }
 
-        // Limita a 100 resultados para não travar se tiver muitos
-        const displayData = data.slice(0, 100); 
-
-        displayData.forEach(item => {
-            let badgeClass = "bg-secondary";
-            if(item.dept === "Educação") badgeClass = "bg-primary";
-            if(item.dept === "Saúde") badgeClass = "bg-success";
-            if(item.dept === "Social") badgeClass = "bg-warning text-dark";
+        data.forEach(item => {
+            let color = "secondary";
+            if(item.dept === "Educação") color = "primary";
+            if(item.dept === "Saúde") color = "success";
+            if(item.dept === "Social") color = "warning";
 
             const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address + ", Montes Claros")}`;
 
             const row = `
                 <tr>
-                    <td><span class="badge ${badgeClass}">${item.dept}</span></td>
-                    <td class="fw-bold text-dark">${item.local}</td>
-                    <td class="text-muted small"><i class="bi bi-geo-alt-fill"></i> ${item.address}</td>
+                    <td><span class="badge bg-${color}">${item.dept}</span></td>
+                    <td class="fw-bold">${item.local}</td>
+                    <td class="text-muted small"><i class="bi bi-geo-alt"></i> ${item.address}</td>
                     <td class="text-center">
-                        <a href="${mapLink}" target="_blank" class="btn btn-sm btn-outline-light text-primary border-0">
-                            <i class="bi bi-box-arrow-up-right"></i>
+                        <a href="${mapLink}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-map-fill"></i>
                         </a>
                     </td>
-                </tr>
-            `;
+                </tr>`;
             tableBody.innerHTML += row;
         });
     }
 
+    // Filtros
     function filterData() {
         const term = searchInput.value.toLowerCase();
         const dept = deptFilter.value;
-
+        
         const filtered = database.filter(item => {
-            return (item.local.toLowerCase().includes(term) || item.address.toLowerCase().includes(term)) &&
-                   (dept === "" || item.dept === dept);
+            const matchesTerm = item.local.toLowerCase().includes(term) || item.address.toLowerCase().includes(term);
+            const matchesDept = dept === "" || item.dept === dept;
+            return matchesTerm && matchesDept;
         });
-
         renderTable(filtered);
     }
 
-    // Inicialização
-    initFilters();
-    renderChart();
-    renderTable(database);
-
-    // Eventos
     searchInput.addEventListener('input', filterData);
     deptFilter.addEventListener('change', filterData);
 
+    // Iniciar
+    renderTable(database);
 </script>
 
 </body>
