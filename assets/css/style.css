@@ -1,0 +1,117 @@
+:root {
+    --cor-educacao: #0d6efd;
+    --cor-saude: #198754;
+    --cor-social: #fd7e14;
+    --cor-meioamb: #20c997;
+    --cor-servicos: #6c757d;
+    --cor-esporte: #dc3545;
+    --cor-cultura: #6610f2;
+    --cor-agri: #ffc107;
+    --cor-planej: #0dcaf0;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    background-color: #f4f7f6;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #334155;
+}
+
+/* Cards de Estatística */
+.card-stat {
+    border: none;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: #fff;
+}
+
+.card-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.icon-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Cores de Fundo */
+.bg-edu { background-color: var(--cor-educacao); }
+.bg-saude { background-color: var(--cor-saude); }
+.bg-social { background-color: var(--cor-social); }
+.bg-outros { background-color: #334155; }
+
+/* Tabela Customizada */
+.table-container {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.table thead th {
+    background-color: var(--bg-light);
+    border-bottom: 2px solid #e2e8f0;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Badges de Departamento */
+.badge-dept {
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.badge-Educação { background-color: rgba(13, 110, 253, 0.1); color: var(--cor-educacao); }
+.badge-Saúde { background-color: rgba(25, 135, 84, 0.1); color: var(--cor-saude); }
+.badge-Social { background-color: rgba(253, 126, 20, 0.1); color: var(--cor-social); }
+.badge-Meio-Ambiente { background-color: rgba(32, 201, 151, 0.1); color: var(--cor-meioamb); }
+.badge-Esporte { background-color: rgba(220, 53, 69, 0.1); color: var(--cor-esporte); }
+.badge-Cultura { background-color: rgba(102, 16, 242, 0.1); color: var(--cor-cultura); }
+.badge-Agricultura { background-color: rgba(255, 193, 7, 0.1); color: #856404; }
+.badge-Planejamento { background-color: rgba(13, 202, 240, 0.1); color: #087990; }
+.badge-Serviços { background-color: rgba(108, 117, 125, 0.1); color: var(--cor-servicos); }
+
+/* Filtros */
+.filter-card {
+    position: sticky;
+    top: 1rem;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    border-color: var(--cor-educacao);
+}
+
+/* Impressão */
+@media print {
+    .no-print { display: none !important; }
+    .card-stat { box-shadow: none; border: 1px solid #ddd; }
+    body { background: #fff; }
+}

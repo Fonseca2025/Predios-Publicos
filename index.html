@@ -3,157 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Geral - Prefeitura de Montes Claros</title>
-    <!-- Bootstrap 5 -->
+    <title>Painel de Gestão - Montes Claros</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ícones -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        :root {
-            --cor-educacao: #0d6efd; /* Azul */
-            --cor-saude: #198754;    /* Verde */
-            --cor-social: #fd7e14;   /* Laranja */
-            --cor-meioamb: #20c997;  /* Verde Água */
-            --cor-servicos: #6c757d; /* Cinza */
-            --cor-esporte: #dc3545;  /* Vermelho */
-            --cor-cultura: #6610f2;  /* Roxo */
-            --cor-agri: #ffc107;     /* Amarelo */
-        }
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
-        
-        .card-stat { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-        .card-stat:hover { transform: translateY(-5px); }
-        
-        .icon-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: white; }
-        
-        .bg-edu { background-color: var(--cor-educacao); }
-        .bg-saude { background-color: var(--cor-saude); }
-        .bg-social { background-color: var(--cor-social); }
-        .bg-outros { background-color: #343a40; }
-
-        .badge-dept { font-size: 0.8em; font-weight: 500; }
-        
-        /* Cores das Badges na Tabela */
-        .badge-Educação { background-color: var(--cor-educacao); }
-        .badge-Saúde { background-color: var(--cor-saude); }
-        .badge-Social { background-color: var(--cor-social); }
-        .badge-Meio-Ambiente { background-color: var(--cor-meioamb); color: black; }
-        .badge-Esporte { background-color: var(--cor-esporte); }
-        .badge-Cultura { background-color: var(--cor-cultura); }
-        .badge-Agricultura { background-color: var(--cor-agri); color: black; }
-        .badge-Serviços { background-color: var(--cor-servicos); }
-        .badge-Planejamento { background-color: #0dcaf0; color: black; }
-
-        .table-hover tbody tr:hover { background-color: #e2e6ea; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-<div class="container-fluid px-4 py-4">
-    
-    <!-- Cabeçalho -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-grid-fill text-primary"></i> Painel Integrado de Gestão</h3>
-            <p class="text-muted small">Prefeitura Municipal de Montes Claros - Mapeamento de Locais</p>
-        </div>
-        <div>
-            <button class="btn btn-outline-secondary btn-sm me-2" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
-            <span class="badge bg-dark p-2">Total: <span id="totalBadge">0</span> Unidades</span>
-        </div>
-    </div>
+    <div class="container-fluid px-lg-5 py-4">
+        
+        <!-- Header -->
+        <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-layout-text-window-reverse text-primary me-2"></i>
+                    Painel Integrado de Gestão
+                </h2>
+                <p class="text-muted mb-0">Prefeitura de Montes Claros • Mapeamento de Unidades e Serviços</p>
+            </div>
+            <div class="d-flex align-items-center gap-3 no-print">
+                <button class="btn btn-outline-secondary d-flex align-items-center gap-2" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+                <div class="bg-dark text-white px-3 py-2 rounded-3 shadow-sm">
+                    <small class="opacity-75 d-block text-uppercase fw-bold" style="font-size: 0.65rem;">Total Geral</small>
+                    <span class="h5 fw-bold mb-0" id="totalBadge">0</span> <small>unidades</small>
+                </div>
+            </div>
+        </header>
 
-    <!-- Cards de Resumo -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card card-stat p-3 h-100 border-start border-4 border-primary">
-                <div class="d-flex align-items-center">
-                    <div class="icon-circle bg-edu"><i class="bi bi-mortarboard"></i></div>
-                    <div class="ms-3">
-                        <p class="text-muted mb-0 small fw-bold">EDUCAÇÃO</p>
-                        <h3 class="fw-bold mb-0" id="countEdu">0</h3>
+        <!-- Stats Grid -->
+        <div class="row g-4 mb-5">
+            <div class="col-sm-6 col-xl-3">
+                <div class="card card-stat p-4 border-start border-4 border-primary">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-edu"><i class="bi bi-mortarboard-fill"></i></div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small fw-bold text-uppercase">Educação</p>
+                            <h3 class="fw-bold mb-0" id="countEdu">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-stat p-3 h-100 border-start border-4 border-success">
-                <div class="d-flex align-items-center">
-                    <div class="icon-circle bg-saude"><i class="bi bi-heart-pulse"></i></div>
-                    <div class="ms-3">
-                        <p class="text-muted mb-0 small fw-bold">SAÚDE</p>
-                        <h3 class="fw-bold mb-0" id="countSaude">0</h3>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card card-stat p-4 border-start border-4 border-success">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-saude"><i class="bi bi-heart-pulse-fill"></i></div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small fw-bold text-uppercase">Saúde</p>
+                            <h3 class="fw-bold mb-0" id="countSaude">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-stat p-3 h-100 border-start border-4 border-warning">
-                <div class="d-flex align-items-center">
-                    <div class="icon-circle bg-social"><i class="bi bi-people"></i></div>
-                    <div class="ms-3">
-                        <p class="text-muted mb-0 small fw-bold">SOCIAL</p>
-                        <h3 class="fw-bold mb-0" id="countSocial">0</h3>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card card-stat p-4 border-start border-4 border-warning">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-social"><i class="bi bi-people-fill"></i></div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small fw-bold text-uppercase">Social</p>
+                            <h3 class="fw-bold mb-0" id="countSocial">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-stat p-3 h-100 border-start border-4 border-dark">
-                <div class="d-flex align-items-center">
-                    <div class="icon-circle bg-outros"><i class="bi bi-building"></i></div>
-                    <div class="ms-3">
-                        <p class="text-muted mb-0 small fw-bold">OUTRAS SECRETARIAS</p>
-                        <h3 class="fw-bold mb-0" id="countOutros">0</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-3">
-        <!-- Coluna Esquerda: Gráfico e Filtros -->
-        <div class="col-lg-3">
-            <!-- Gráfico -->
-            <div class="card card-stat mb-3">
-                <div class="card-body">
-                    <h6 class="fw-bold text-muted mb-3">Distribuição Geral</h6>
-                    <canvas id="deptChart" height="250"></canvas>
-                </div>
-            </div>
-
-            <!-- Filtros -->
-            <div class="card card-stat">
-                <div class="card-body">
-                    <h6 class="fw-bold text-muted mb-3">Filtros de Busca</h6>
-                    <div class="mb-3">
-                        <label class="form-label small">Pesquisa Textual</label>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Nome, rua ou bairro...">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Filtrar por Secretaria</label>
-                        <select id="deptFilter" class="form-select">
-                            <option value="">Todas as Secretarias</option>
-                            <!-- JS Preenche -->
-                        </select>
-                    </div>
-                    <div class="d-grid">
-                        <button class="btn btn-primary btn-sm" onclick="resetFilters()">Limpar Filtros</button>
+            <div class="col-sm-6 col-xl-3">
+                <div class="card card-stat p-4 border-start border-4 border-dark">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-outros"><i class="bi bi-building-fill"></i></div>
+                        <div class="ms-3">
+                            <p class="text-muted mb-0 small fw-bold text-uppercase">Outros</p>
+                            <h3 class="fw-bold mb-0" id="countOutros">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Coluna Direita: Tabela -->
-        <div class="col-lg-9">
-            <div class="card card-stat h-100">
-                <div class="card-body p-0">
+        <div class="row g-4">
+            <!-- Sidebar: Chart & Filters -->
+            <aside class="col-lg-4 col-xl-3">
+                <div class="filter-card d-flex flex-column gap-4">
+                    <!-- Chart Card -->
+                    <div class="card card-stat">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-4">Distribuição por Área</h6>
+                            <div style="height: 300px;">
+                                <canvas id="deptChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Card -->
+                    <div class="card card-stat no-print">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">Filtros de Busca</h6>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Pesquisar</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                    <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Nome, rua ou bairro...">
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold">Secretaria</label>
+                                <select id="deptFilter" class="form-select">
+                                    <option value="">Todas as Secretarias</option>
+                                </select>
+                            </div>
+                            <button id="resetBtn" class="btn btn-primary w-100 py-2 fw-semibold">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content: Table -->
+            <main class="col-lg-8 col-xl-9">
+                <div class="card card-stat border-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light sticky-top">
+                            <thead>
                                 <tr>
                                     <th style="width: 15%;">Secretaria</th>
                                     <th style="width: 40%;">Unidade / Local</th>
@@ -162,345 +142,18 @@
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
-                                <!-- JS Preenche -->
+                                <!-- JS Populates here -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-</div>
 
-<script>
-    // ==========================================
-    // BANCO DE DADOS UNIFICADO (TODAS SECRETARIAS)
-    // ==========================================
-    const rawData = [
-        // --- EDUCAÇÃO (Lista de 88 itens fornecida anteriormente) ---
-        { dept: "Educação", nome: "E.M. SEBASTIAO MENDES", end: "AV PAULISTA, 1135 ALTO BOA VISTA" },
-        { dept: "Educação", nome: "E.M. BOLIVAR DE ANDRADE", end: "RUA CECILIA MEIRELLES, 465 PLANALTO" },
-        { dept: "Educação", nome: "E.M. MARIA DE LOURDES PINHEIRO", end: "RUA PORTUGAL, 141 INDEPENDENCIA" },
-        { dept: "Educação", nome: "E.M. NEIDE MELO FRANCO", end: "RUA PEDRO RAMOS OLIVEIRA, 471 VILA ANALIA" },
-        { dept: "Educação", nome: "E.M. DU NARCISO", end: "AV PERIMETRAL, 4001 VILAGE II" },
-        { dept: "Educação", nome: "E.M. ALFREDO COUTINHO", end: "RUA SINVAL FROES, 263 CAMILO PRATES" },
-        { dept: "Educação", nome: "E.M. CELESTINO PEREIRA SALGADO", end: "RUA 19, 150 - JARDIM PRIMAVERA" },
-        { dept: "Educação", nome: "E.M. AFONSO SALGADO", end: "RUA ANTONIO LOPES DA SILVA, 712 - VILA ATLANTIDA" },
-        { dept: "Educação", nome: "E.M. GERALDO PEREIRA SOUZA", end: "RUA JOSEFINA CHAVES, S/N - SANTA LUCIA II" },
-        { dept: "Educação", nome: "E.M. PROF. EUNICE CARNEIRO", end: "RUA D, 300- JOSE CORREA MACHADO" },
-        { dept: "Educação", nome: "E.M. HILDA CARVALHO MENDES", end: "RUA ARGENTINA, 395 DR JOAO ALVES" },
-        { dept: "Educação", nome: "E.M.DR. JOAO VALE MAURICIO", end: "AV PERIMETRAL, 2300 - VILAGE I" },
-        { dept: "Educação", nome: "E.M.ROZENDA ZANES", end: "RUA D, 115 JARDIM PLANALTO" },
-        { dept: "Educação", nome: "E.M. MARIA SIMONE SOARES", end: "RUA ESPIRITO SANTO, 811 - ESPLANADA" },
-        { dept: "Educação", nome: "E.M. JAIR DE OLIVEIRA", end: "RUA CELESTINO PEREIRA, 320 - JARDIM ELDORADO" },
-        { dept: "Educação", nome: "E.M. EGIDIO CORDEIRO AQUINO", end: "AV:ALAMEDA DAS AMERICAS, 580 INDEPENDENCIA" },
-        { dept: "Educação", nome: "E.M. ALCIDES CARVALHO", end: "RUA DERMEVAL CAMPOS, 263 V. CRUZ" },
-        { dept: "Educação", nome: "CAIC AMERICO SOUTO", end: "RUA PENIEL, 314 - RAUL JOSE PEREIRA" },
-        { dept: "Educação", nome: "E.M. DONA VIDINHA PIRES", end: "RUA CRISANTINO ALMEIDA BOREM, 55 - VARGEM GRANDE" },
-        { dept: "Educação", nome: "E.M. ZIZINHA RIBEIRO", end: "RUA TRINTA E CINCO, 805 - SANTO AMARO" },
-        { dept: "Educação", nome: "E.M. ROTARY SÃO LUIZ", end: "RUA QUARENTA E CINCO, 385, CIDADE INDUSTRIAL" },
-        { dept: "Educação", nome: "E.M. DR MÁRIO RIBEIRO TOURINHO", end: "AV AMPERE, 27, LOURDES" },
-        { dept: "Educação", nome: "CAIC MARACANA", end: "AV. QUELUZ S/N MARACANA" },
-        { dept: "Educação", nome: "E.M. MESTRA FININHA", end: "RUA D 350 CIRO DOS ANJOS" },
-        { dept: "Educação", nome: "E.M.JASON CAETANO I", end: "RUA GERALDO BATISTA NUNES 30 SANTO ANTONIO" },
-        { dept: "Educação", nome: "E.M.JASON CAETANO II", end: "AV.LAURO DIAS DE SÁ Nº369 ST ANTONIO" },
-        { dept: "Educação", nome: "E.M.CRISANTINO BOREM", end: "RUA GUARANI, 375 NSA SRA GRACAS" },
-        { dept: "Educação", nome: "E.M.RUY LAGE", end: "RUA: J, 155 - PLANALTO 2" },
-        { dept: "Educação", nome: "E.M.IRMA BEATA", end: "RUA CINCO Nº158 CHIQUINHO GUIMARAES" },
-        { dept: "Educação", nome: "E.M. PROFª SÔNIA DE QUADROS", end: "RUA:FRANCISCO COUTINHO,457 AGUSTA MOTA" },
-        { dept: "Educação", nome: "CEMEI SÃO JUDAS", end: "RUA PADRE VIEIRA, 447 SÃO JUDAS" },
-        { dept: "Educação", nome: "CEMEI MANOEL CARIBE", end: "RUA GENTIL GONZAGA,201-CANELAS" },
-        { dept: "Educação", nome: "CEMEI HAMILTON LOPES", end: "AV FLORIANO NEIVA, 133 - SÃO JOAO" },
-        { dept: "Educação", nome: "CEMEI ELOIN LOPES SOUZA", end: "RUA: RUI DE ALBUQUERQUE Nº2.300-VILAGE DO LAGO" },
-        { dept: "Educação", nome: "CEMEI SÃO MARCOS", end: "RUA A, 112 - VILA ANALIA" },
-        { dept: "Educação", nome: "CEMEI RUTH TUPINAMBA", end: "RUA GENERAL CARNEIRO,485 -Centro" },
-        { dept: "Educação", nome: "CEMEI PE. ADERBAL", end: "RUA DERMEVAL CAMPOS, 483 - VERA CRUZ" },
-        { dept: "Educação", nome: "CEMEI PAULO FREIRE", end: "RUA O, 67 - VILAGE II" },
-        { dept: "Educação", nome: "CEMEI AMIGUINHOS DA VILA", end: "RUA 1º CENTENARIO, 17 -C.CAMARA" },
-        { dept: "Educação", nome: "CEMEI LUIZINHA GONCALVES", end: "RUA MAJOR SANTOS 442 V. ATLANTICA" },
-        { dept: "Educação", nome: "CEMEI PROF. MARIA CONC. COSTA", end: "RUA MONTE PLANO, 834 - CINTRA" },
-        { dept: "Educação", nome: "CEMEI PROF MARIA DORES RODRIGUES", end: "RUA 7 SETEMBRO S/N JOSE CORREA MACHADO" },
-        { dept: "Educação", nome: "CEMEI D. IVONE SILVEIRA", end: "RUA ENOR DE BRITO ,100 -MORADA SOL" },
-        { dept: "Educação", nome: "CEMEI MAJOR PRATES", end: "RUA LAURA PRATES, 54 M. PRATES" },
-        { dept: "Educação", nome: "CEMEI MONTEIRO LOBATO", end: "RUA DA DEMOCRACIA, 551 ALTEROSA" },
-        { dept: "Educação", nome: "CEMEI AMIGUINHOS DE JESUS", end: "AV LEONEL BEIRAO, 3317 - V. TELMA" },
-        { dept: "Educação", nome: "CEMEI Mª DE LOURDES (NOSSO LAR)", end: "RUA MARCOS PLINIO RIBEIRO, 202 SÃO JUDAS" },
-        { dept: "Educação", nome: "CEMEI PROF ANA LUCIA MOTA", end: "AV: INDEPENDÊNCIA, Nº4688 INDEPENDÊNCIA" },
-        { dept: "Educação", nome: "CEMEI PROF ELIZABETH SOARES", end: "AL.QUINTA DAS AMERICAS 71-Acácias" },
-        { dept: "Educação", nome: "CEMEI SÃO NORBERTO", end: "RUA ANTONIO FIGUEIREDO, 200 VILA OLIVEIRA" },
-        { dept: "Educação", nome: "CEMEI PROF IDOLETA MACIEL", end: "RUA MANOEL JOSE DA SILVA Nº438 STO ANTONIO" },
-        { dept: "Educação", nome: "CEMEI AMIGUINHOS DO ADELOUR", end: "RUA GEOVANE SOARES DA CRUZ, 609 LOURDES" },
-        { dept: "Educação", nome: "CEMEI ANINHA RIBEIRO", end: "AV:FRANCISCO RIBEIRO,S/N VILA EXPOSIÇÃO" },
-        { dept: "Educação", nome: "CEMEI SANTO AMARO", end: "RUA TRINTA E SEIS, S/N - SANTO AMARO" },
-        { dept: "Educação", nome: "CEMEI CASINHA FELIZ", end: "RUA ABEL SENA, 402 J. ELDORADO" },
-        { dept: "Educação", nome: "CEMEI DR MÁRIO RIBEIRO", end: "AV. PLANETÁRIA, 138, CIDADE INDUSTRIAL" },
-        { dept: "Educação", nome: "CEMEI NOVA VIDA", end: "AV JOÃO XXIII, 2015, STOS REIS" },
-        { dept: "Educação", nome: "CEMEI CANACY", end: "RUA : D, 173, VILA ATLANTIDA" },
-        { dept: "Educação", nome: "CEMEI MADRE PAULA ELIZABETH", end: "RUA SÃO JOÃO, 1400, T.SANTOS" },
-        { dept: "Educação", nome: "CEMEI NOSSA SRA CONCEIÇÃO", end: "RUA GERALDINO MACHADO, 677, VILA AUREA" },
-        { dept: "Educação", nome: "CEMEI DR IVAN LOPES", end: "RUA SÃO MARCELINO,Nº36 JD BRASIL" },
-        { dept: "Educação", nome: "CEMEI O BOM SAMARITANO", end: "RUA SEIS, Nº65 - SANTA LUCIA" },
-        { dept: "Educação", nome: "CEMEI ALEGRIA DE VIVER", end: "RUA ADAO GOMES FERREIRA, 884 RENASCENSA" },
-        { dept: "Educação", nome: "CEMEI BRANCA DE NEVE", end: "PÇA DA IGREJA, 85 SÃO GERALDO" },
-        { dept: "Educação", nome: "CEMEI MUNDO DA CRIANCA", end: "AV. QUELUZ S/N MARACANA" },
-        { dept: "Educação", nome: "CEMEI SOLAR DE JESUS", end: "AV. CORAÇÃO DE JESUS Nº1645 SÃO GERALDO" },
-        { dept: "Educação", nome: "CEMEI CRISTO REI", end: "RUA ELIS CHAMONE 380 CRISTO REI" },
-        { dept: "Educação", nome: "CEMEI SÃO FRANCISCO DE ASSIS", end: "RUA DO ACESSO Nº113 SÃO FRANCISCO DE ASSIS" },
-        { dept: "Educação", nome: "CEMEI DEP ANTONIO PIMENTA", end: "RUA MONTE PLANO S/Nº SANTA RITA" },
-        { dept: "Educação", nome: "CEMEI SANTA RAFAELA", end: "RUA FIRMINO FERREIRA, 53 STA RAFAELA" },
-        { dept: "Educação", nome: "CEMEI MEI MEI", end: "RUA PROF MARIA MACHADO, 297 SANTA RITA" },
-        { dept: "Educação", nome: "CEMEI ROSITA AQUINO (MONTE SIAO)", end: "RUA E Nº39 MONTE SIÃO IV" },
-        { dept: "Educação", nome: "CENTRO DE CONVIVIO CURIMIM", end: "AV 1, S/N - VILA ANALIA" },
-        { dept: "Educação", nome: "CEMEI PROF. HELOISA VELOSO ANJOS", end: "RUA: BENJAMIN DOS ANJOS Nº400 - MELO" },
-        { dept: "Educação", nome: "CEMEI CIDA CHELONE", end: "RUA VIUVA PACULDINO, 621- JARAGUA II" },
-        { dept: "Educação", nome: "CEMEI PROF RAIMUNDO NETO", end: "RUA: DOIS,159 -CHIQUINHO GUIMARAES" },
-        { dept: "Educação", nome: "CEMEI PROF Mª DE LOURDES", end: "RUA M ,205-NOVA AMÉRICA" },
-        { dept: "Educação", nome: "CEMEI VALDEIR C.MACHADO", end: "AV:F ,Nº461 -JARDIM PRIMAVERA" },
-        { dept: "Educação", nome: "CEMEI SÃO NORBERTO ANEXO", end: "RUA MARIA DA CONCEIÇÃO OLIVEIRA Nº55" },
-        { dept: "Educação", nome: "CEMEI PROF LUCIA PIMENTA", end: "AV:NECO DELFINO ,571-DELFINO MAGALHAES" },
-        { dept: "Educação", nome: "CEMEI PROFª ANA LUCIA MOTA", end: "RUA LAGOA CUMPRIDA 685 - CARMELO" },
-        { dept: "Educação", nome: "ALMOXARIFADO EDUCAÇÃO", end: "RUA CARLOS PAULINO CARDOSO, 401 VILA EXPOSICAO" },
-        { dept: "Educação", nome: "CAIC AMERICO SOUTO (AUDITORIO)", end: "AV PRINCIPAL, 314 - VILA EXPOSICAO" },
-
-        // --- SAÚDE (Baseado no PDF original - aprox 80 unidades principais) ---
-        { dept: "Saúde", nome: "CENTRO ZOONOSES LABORATÓRIO", end: "AV.ANTÔNIO LAFETÁ REBELLO Nº331" },
-        { dept: "Saúde", nome: "ACADEMIA DE SAUDE DELFINO", end: "RUA DA FELICIDADE S/Nº -DELFINO MAGALHÃES" },
-        { dept: "Saúde", nome: "ACADEMIA DE SAUDE ELDORADO", end: "RUA VICENTE BRAGA S/Nº-ELDORADO" },
-        { dept: "Saúde", nome: "ACADEMIA DE SAUDE INDEPENDENCIA", end: "RUA MARQUEZA SANTOS Nº 580" },
-        { dept: "Saúde", nome: "ACADEMIA DE SAUDE JOAO BOTELHO", end: "AV. LEONEL BEIRAO DE JESUS Nº 70" },
-        { dept: "Saúde", nome: "CEREST - CENTRO REF TRABALHADOR", end: "RUA CASSIMIRO DE ABREU Nº 54 C. CAMARA" },
-        { dept: "Saúde", nome: "FARMACIA DE TODOS", end: "RUA CASSIMIRO DE ABREU Nº 76 C. CAMARA" },
-        { dept: "Saúde", nome: "CERDI-DOENÇAS INFECTO-COM", end: "AV. FLORIANO NEIVA S/N - SÃO JOAO" },
-        { dept: "Saúde", nome: "CAPS AD", end: "RUA SEBASTIÃO 123-TODOS OS SANTOS" },
-        { dept: "Saúde", nome: "CAPS INFANTIL", end: "RUA PROJETADA Nº34 PLANALTO" },
-        { dept: "Saúde", nome: "ALMOXARIFADO (SAÚDE)", end: "AV:GOVERNADOR MAGALHÃAES PINTO Nº 4000" },
-        { dept: "Saúde", nome: "FARMACIA BASICA MERCADO CENTRAL", end: "RUA MARECHAL DEODORO Nº63-CENTRO" },
-        { dept: "Saúde", nome: "SAUDE DA MULHER", end: "AV. DONATO QUINTINO Nº 341 CANELAS" },
-        { dept: "Saúde", nome: "CENTRO DE MED. FIS. E REABILITAÇÃO", end: "RUA GEOVANE SOARES Nº 647 - LOURDES" },
-        { dept: "Saúde", nome: "POLICLINICA ALTO SÃO JOAO", end: "AV FLORIANO NEIVA, S/N - SÃO JOAO" },
-        { dept: "Saúde", nome: "POLICLINICA DR. ARIOSTO MACHADO I", end: "RUA NELSON ALKIMIN Nº 120 - JD ALVORADA" },
-        { dept: "Saúde", nome: "CENTRO OFTAMOLOGICO GERALDO ATHAYDE", end: "AV. PAULISTA Nº 446 - SANTO ANTONIO" },
-        { dept: "Saúde", nome: "UBS SANTOS REIS", end: "RUA GERALDINO MACHADO Nº677 - SANTOS REIS" },
-        { dept: "Saúde", nome: "UBS ACÁCIAS", end: "AV. ALAMEDA A, Nº 105 - ACÁCIAS" },
-        { dept: "Saúde", nome: "UBS ALCIDES RABELO", end: "RUA GIOVANI FAGUNDES DE SOUZA, Nº 199" },
-        { dept: "Saúde", nome: "UBS ALICE MAIA", end: "PRAÇA ERNESTINA FERREIRA NUNES, N° 34" },
-        { dept: "Saúde", nome: "UBS ALTO SÃO JOÃO", end: "RUA JOÃO TEIXEIRA BASTOS, N° 114" },
-        { dept: "Saúde", nome: "UBS BELA VISTA", end: "RUA QUINCAS SOUTO, Nº 1.420" },
-        { dept: "Saúde", nome: "UBS MONTE CARMELO", end: "RUA OLIVINA, N° 240" },
-        { dept: "Saúde", nome: "UBS CENTRO", end: "RUA GABRIEL PASSOS, Nº 53" },
-        { dept: "Saúde", nome: "UBS CIDADE INDUSTRIAL", end: "RUA 43, Nº 210" },
-        { dept: "Saúde", nome: "UBS CINTRA", end: "RUA CÔNEGO MARCOS, Nº 744" },
-        { dept: "Saúde", nome: "UBS DELFINO MAGALHÃES", end: "AV. NECO DELFINO, Nº 253" },
-        { dept: "Saúde", nome: "UBS EDGAR PEREIRA", end: "AV. SIDNEY CHAVES, Nº 1279" },
-        { dept: "Saúde", nome: "UBS ELDORADO", end: "RUA ANTÔNIO MORENO, Nº 417" },
-        { dept: "Saúde", nome: "UBS ESPLANADA", end: "RUA CORONEL COELHO, N° 195" },
-        { dept: "Saúde", nome: "UBS INDEPENDÊNCIA", end: "RUA ESPANHA, N° 50" },
-        { dept: "Saúde", nome: "UBS JARAGUÁ", end: "AV. ANTONIO DE FREITAS, N° 205" },
-        { dept: "Saúde", nome: "UBS JARDIM PALMEIRAS", end: "RUA NATAL, Nº 318" },
-        { dept: "Saúde", nome: "UBS MAJOR PRATES", end: "RUA OLÍMPIO PRATES, N° 773" },
-        { dept: "Saúde", nome: "UBS MARACANÃ", end: "RUA BRASILIA, N° 724" },
-        { dept: "Saúde", nome: "UBS MORADA DO SOL", end: "RUA HONORATO CAMPOS, N° 118" },
-        { dept: "Saúde", nome: "UBS MORRINHOS", end: "RUA MELO VIANA, N° 550" },
-        { dept: "Saúde", nome: "UBS NOVA SUÍÇA", end: "RUA ITÁLIA, N° 1055 B" },
-        { dept: "Saúde", nome: "UBS NOVO DELFINO", end: "RUA 35, N° 39" },
-        { dept: "Saúde", nome: "UBS PLANALTO", end: "RUA DIVINO ESPIRITO SANTO, N° 389" },
-        { dept: "Saúde", nome: "UBS RENASCENÇA", end: "RUA BIÔ LOPES, N° 1272" },
-        { dept: "Saúde", nome: "UBS SÃO JUDAS", end: "RUA PADRE VIEIRA, N° 620" },
-        { dept: "Saúde", nome: "UBS VILA ATLANTIDA", end: "RUA C, N° 90" },
-        { dept: "Saúde", nome: "UBS VILA SION", end: "RUA JOSE MARIA SILVA, N° 131" },
-
-        // --- SOCIAL (CRAS/CREAS) ---
-        { dept: "Social", nome: "MERCADO CENTRAL CHRISTO RAEFF", end: "RUA MARECHAL DEODORO, 63 - CENTRO" },
-        { dept: "Social", nome: "CRAS JK - VILLAGE II", end: "AV ANTONIO DE FREITAS, S/N VILLAGE II" },
-        { dept: "Social", nome: "CRAS MARACANA", end: "AV BRASILIA, 538 MARACANA" },
-        { dept: "Social", nome: "CRAS INDEPENDENCIA", end: "RUA GUATEMALA, 298 - VILA REAL" },
-        { dept: "Social", nome: "CRAS RENASCENCA", end: "RUA IVETE VARGAS, 421 - V. REGINA" },
-        { dept: "Social", nome: "CRAS MAJOR PRATES", end: "RUA PROF RAIMUNDO NETO, 701" },
-        { dept: "Social", nome: "CRAS SANTOS REIS", end: "RUA ANTONIO MARTINS, 31" },
-        { dept: "Social", nome: "CRAS CENTRAL", end: "PCA RAUL SOARES, S/N CENTRO" },
-        { dept: "Social", nome: "CRAS DELFINO", end: "RUA SÃO LUIZ, 240 STO ANTONIO" },
-        { dept: "Social", nome: "CRAS VILA OLIVEIRA", end: "RUA GABRIEL BATISTA" },
-        { dept: "Social", nome: "CRAS RURAL", end: "MERCADO CENTRAL S/N CENTRO" },
-        { dept: "Social", nome: "CRAS SÃO JUDAS", end: "AV LEONEL BEIRAO DE JESUS, 3363" },
-        { dept: "Social", nome: "CENTRO POP CANELAS", end: "RUA VIRIATO RIBEIRO AQUINO N.º 90" },
-        { dept: "Social", nome: "CREAS CANELAS", end: "RUA VIRIATO RIBEIRO AQUINO N.º 80" },
-        { dept: "Social", nome: "CREAS CENTRAL", end: "RUA TIRADENTES ,465 - CENTRO" },
-        { dept: "Social", nome: "CONSELHO TUTELAR", end: "RUA BENJAMIM DOS ANJOS N.º 533" },
-        { dept: "Social", nome: "COORDENADORIA DO IDOSO", end: "RUA DOMINGOS PORTUGUES,347" },
-        { dept: "Social", nome: "UNIDADE EXT. DESENVOLVIMENTO", end: "RUA GONÇALVES FIGUEIRA 202 CENTRO" },
-
-        // --- OUTRAS SECRETARIAS (Meio Ambiente, Esporte, Cultura, etc) ---
-        { dept: "Planejamento", nome: "SALA GERENCIA INFORMATICA", end: "AV CULA MANGABEIRA, 211 CENTRO" },
-        { dept: "Gabinete", nome: "GABINETE PREFEITO", end: "AV CULA MANGABEIRA, 211 CENTRO" },
-        { dept: "Meio Ambiente", nome: "PARQUE MILTON PRATES (SEDE)", end: "AV: PEDRO AUGUSTO VELOSO Nº 50" },
-        { dept: "Meio Ambiente", nome: "VIVEIRO MUNICIPAL", end: "RUA: PROFESSOR VALDIR RAMETA S/N" },
-        { dept: "Meio Ambiente", nome: "SEDE DA SEMMA", end: "AV JOSÉ CORREIA MACHADO N° 900" },
-        { dept: "Meio Ambiente", nome: "PARQUE DAS MANGUEIRAS", end: "RUA GUAPORÉ N° 70 B" },
-        { dept: "Meio Ambiente", nome: "PARQUE SAPUCAIA", end: "RUA COLOMBIA S/N" },
-        { dept: "Agricultura", nome: "CEANORTE (CASA AMARELA)", end: "AV: CEANORTE Nº 3597 - VILA TELMA" },
-        { dept: "Agricultura", nome: "P.A.A (AQUISIÇÃO ALIMENTOS)", end: "AV: CEANORTE Nº 3597 - VILA TELMA" },
-        { dept: "Cultura", nome: "SECRETARIA DE CULTURA", end: "RUA: CORONEL CELESTINO Nº 99" },
-        { dept: "Cultura", nome: "CASA DO ARTESÃO", end: "RUA: GEOVANI SOARES DA CRUZ Nº 681" },
-        { dept: "Cultura", nome: "CENTRO CULTURAL HERMES DE PAULA", end: "PRAÇA DOUTOR CHAVES ,Nº 32" },
-        { dept: "Esporte", nome: "GINASIO ANA LOPES", end: "AV: PE AUGUSTO VELOSO,39" },
-        { dept: "Esporte", nome: "GINASIO POLIESPORTIVO", end: "AV: ANTÔNIO FERREIRA DE OLIVEIRA,S/N" },
-        { dept: "Esporte", nome: "CAMPO JOAO BOTELHO", end: "RUA: ZÉ DO PIA,4625" },
-        { dept: "Esporte", nome: "PRAÇA DE ESPORTES", end: "AV: OSVALDO CRUZ Nº311" },
-        { dept: "Esporte", nome: "COMPLEXO ESPORTIVO", end: "AV: NICE Nº100 -IBITURUNA" },
-        { dept: "Serviços", nome: "CENTRO DE APOIO MORRINHOS", end: "RUA: JUSCELINO KUBITSCHEK,250" },
-        { dept: "Serviços", nome: "CEMITÉRIO", end: "AV: LEONEL BEIRÃO DE JESUS,1620" },
-        { dept: "Serviços", nome: "COLETA DE LIXO DOMICILIAR", end: "AV: BRASIL S/N -REGINA PEREZ" },
-        { dept: "Serviços", nome: "SEDE SERVIÇOS URBANOS", end: "RUA CARLOS PAULINO Nº 401" },
-        { dept: "Serviços", nome: "MERCADO CENTRAL (APOIO)", end: "RUA:MARECHAL DEODORO Nº 63" },
-        { dept: "Serviços", nome: "USINA DE VIDROS", end: "RUA: DOMINGOS GONÇALVES FREITAS Nº 20" }
-    ];
-
-    // ==========================================
-    // LÓGICA DO DASHBOARD
-    // ==========================================
-    
-    // Elementos DOM
-    const tableBody = document.getElementById('tableBody');
-    const searchInput = document.getElementById('searchInput');
-    const deptFilter = document.getElementById('deptFilter');
-    const totalBadge = document.getElementById('totalBadge');
-
-    let chartInstance = null;
-
-    // 1. Inicializar Filtros
-    function init() {
-        // Popula Select
-        const uniqueDepts = [...new Set(rawData.map(d => d.dept))].sort();
-        uniqueDepts.forEach(d => {
-            const option = document.createElement('option');
-            option.value = d;
-            option.textContent = d;
-            deptFilter.appendChild(option);
-        });
-
-        updateDashboard(rawData);
-    }
-
-    // 2. Função de Renderização
-    function updateDashboard(data) {
-        // Atualiza Cards KPI
-        document.getElementById('countEdu').innerText = data.filter(d => d.dept === 'Educação').length;
-        document.getElementById('countSaude').innerText = data.filter(d => d.dept === 'Saúde').length;
-        document.getElementById('countSocial').innerText = data.filter(d => d.dept === 'Social').length;
-        document.getElementById('countOutros').innerText = data.filter(d => !['Educação','Saúde','Social'].includes(d.dept)).length;
-        totalBadge.innerText = data.length;
-
-        // Atualiza Gráfico
-        renderChart(data);
-
-        // Renderiza Tabela
-        tableBody.innerHTML = "";
-        if(data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-muted">Nenhum resultado encontrado.</td></tr>`;
-            return;
-        }
-
-        data.forEach(item => {
-            // Ajuste de classes para badges
-            let badgeClass = "badge-Serviços"; // default
-            const d = item.dept;
-            if(d === "Educação") badgeClass = "badge-Educação";
-            else if(d === "Saúde") badgeClass = "badge-Saúde";
-            else if(d === "Social") badgeClass = "badge-Social";
-            else if(d === "Meio Ambiente") badgeClass = "badge-Meio-Ambiente";
-            else if(d === "Esporte") badgeClass = "badge-Esporte";
-            else if(d === "Cultura") badgeClass = "badge-Cultura";
-            else if(d === "Agricultura") badgeClass = "badge-Agricultura";
-            else if(d.includes("Planej") || d.includes("Gab")) badgeClass = "badge-Planejamento";
-
-            // Link Google Maps
-            const query = encodeURIComponent(`${item.end}, Montes Claros, MG`);
-            const mapLink = `https://www.google.com/maps/search/?api=1&query=${query}`;
-
-            const row = `
-                <tr>
-                    <td><span class="badge ${badgeClass} badge-dept">${item.dept}</span></td>
-                    <td class="fw-bold text-dark">${item.nome}</td>
-                    <td class="text-muted small"><i class="bi bi-geo-alt me-1"></i>${item.end}</td>
-                    <td class="text-center">
-                        <a href="${mapLink}" target="_blank" class="btn btn-sm btn-outline-secondary border-0" title="Ver no Mapa">
-                            <i class="bi bi-map-fill text-primary"></i>
-                        </a>
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-    }
-
-    // 3. Gráfico Chart.js
-    function renderChart(data) {
-        const counts = {};
-        data.forEach(d => { counts[d.dept] = (counts[d.dept] || 0) + 1; });
-        
-        const labels = Object.keys(counts);
-        const values = Object.values(counts);
-
-        // Cores correspondentes
-        const colorMap = {
-            "Educação": "#0d6efd", "Saúde": "#198754", "Social": "#fd7e14",
-            "Meio Ambiente": "#20c997", "Esporte": "#dc3545", "Cultura": "#6610f2",
-            "Agricultura": "#ffc107", "Serviços": "#6c757d", "Planejamento": "#0dcaf0"
-        };
-        const bgColors = labels.map(l => colorMap[l] || "#343a40");
-
-        if(chartInstance) chartInstance.destroy();
-
-        const ctx = document.getElementById('deptChart').getContext('2d');
-        chartInstance = new Chart(ctx, {
-            type: 'bar', // ou 'doughnut'
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Unidades',
-                    data: values,
-                    backgroundColor: bgColors,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y', // Barra horizontal para caber os nomes
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { beginAtZero: true } }
-            }
-        });
-    }
-
-    // 4. Lógica de Filtro
-    function filterData() {
-        const term = searchInput.value.toLowerCase();
-        const dept = deptFilter.value;
-
-        const filtered = rawData.filter(item => {
-            const matchText = item.nome.toLowerCase().includes(term) || item.end.toLowerCase().includes(term);
-            const matchDept = dept === "" || item.dept === dept;
-            return matchText && matchDept;
-        });
-
-        updateDashboard(filtered);
-    }
-
-    function resetFilters() {
-        searchInput.value = "";
-        deptFilter.value = "";
-        updateDashboard(rawData);
-    }
-
-    // Listeners
-    searchInput.addEventListener('input', filterData);
-    deptFilter.addEventListener('change', filterData);
-
-    // Start
-    init();
-
-</script>
-
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
