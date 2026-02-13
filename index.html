@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Gestão - Montes Claros</title>
+    <title>Painel de Gestão - MOC</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,146 +14,423 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Estilos Otimizados -->
+    <style>
+        :root {
+            --bs-primary-rgb: 13, 110, 253;
+            --bs-body-font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+        }
+
+        /* --- Estilos dos Cartões de Resultado --- */
+        .result-card {
+            background-color: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .result-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+            border-color: rgba(var(--bs-primary-rgb), 0.5);
+        }
+
+        .result-card .badge {
+            font-size: 0.7rem;
+            padding: 0.3em 0.6em;
+        }
+
+        .result-card .card-title {
+            font-weight: 600;
+            color: #212529;
+            font-size: 1rem;
+        }
+        
+        .result-card .card-address {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        .map-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        /* --- Acordeão para Dashboard e Filtros --- */
+        .accordion-button:not(.collapsed) {
+            background-color: #f8f9fa;
+            color: var(--bs-primary);
+        }
+        .accordion-button:focus {
+            box-shadow: none;
+        }
+
+        /* --- Estilos Gerais --- */
+        .card-stat {
+            background-color: white;
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .no-print {
+            display: block; /* Garante que os filtros sejam visíveis por padrão */
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important; /* Esconde filtros na impressão */
+            }
+            body, .container-fluid {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .result-card {
+                box-shadow: none;
+                border: 1px solid #dee2e6;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container-fluid px-lg-5 py-4">
+    <div class="container-fluid px-lg-4 py-4">
         
         <!-- Header -->
-        <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+        <header class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold text-dark mb-1">
-                    <i class="bi bi-layout-text-window-reverse text-primary me-2"></i>
-                    Painel Integrado de Gestão
-                </h2>
-                <p class="text-muted mb-0">Prefeitura de Montes Claros • Mapeamento de Unidades e Serviços</p>
+                <h3 class="fw-bold text-dark mb-1">Painel Integrado</h3>
+                <p class="text-muted small mb-0">Mapeamento de Unidades</p>
             </div>
-            <div class="d-flex align-items-center gap-3 no-print">
-                <button class="btn btn-outline-secondary d-flex align-items-center gap-2" onclick="window.print()">
-                    <i class="bi bi-printer"></i> Imprimir
-                </button>
-                <div class="bg-dark text-white px-3 py-2 rounded-3 shadow-sm">
-                    <small class="opacity-75 d-block text-uppercase fw-bold" style="font-size: 0.65rem;">Total Geral</small>
-                    <span class="h5 fw-bold mb-0" id="totalBadge">0</span> <small>unidades</small>
-                </div>
+            <div class="bg-dark text-white text-center px-3 py-2 rounded-3 shadow-sm">
+                <small class="opacity-75 d-block text-uppercase fw-bold" style="font-size: 0.6rem;">Total</small>
+                <span class="h5 fw-bold mb-0" id="totalBadge">0</span>
             </div>
         </header>
 
-        <!-- Stats Grid -->
-        <div class="row g-4 mb-5">
-            <div class="col-sm-6 col-xl-3">
-                <div class="card card-stat p-4 border-start border-4 border-primary">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-circle bg-edu"><i class="bi bi-mortarboard-fill"></i></div>
-                        <div class="ms-3">
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Educação</p>
-                            <h3 class="fw-bold mb-0" id="countEdu">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="card card-stat p-4 border-start border-4 border-success">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-circle bg-saude"><i class="bi bi-heart-pulse-fill"></i></div>
-                        <div class="ms-3">
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Saúde</p>
-                            <h3 class="fw-bold mb-0" id="countSaude">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="card card-stat p-4 border-start border-4 border-warning">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-circle bg-social"><i class="bi bi-people-fill"></i></div>
-                        <div class="ms-3">
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Social</p>
-                            <h3 class="fw-bold mb-0" id="countSocial">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="card card-stat p-4 border-start border-4 border-dark">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-circle bg-outros"><i class="bi bi-building-fill"></i></div>
-                        <div class="ms-3">
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Outros</p>
-                            <h3 class="fw-bold mb-0" id="countOutros">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <!-- Sidebar: Chart & Filters -->
-            <aside class="col-lg-4 col-xl-3">
-                <div class="filter-card d-flex flex-column gap-4">
-                    <!-- Chart Card -->
-                    <div class="card card-stat">
-                        <div class="card-body p-4">
-                            <h6 class="fw-bold mb-4">Distribuição por Área</h6>
-                            <div style="height: 300px;">
-                                <canvas id="deptChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filter Card -->
-                    <div class="card card-stat no-print">
-                        <div class="card-body p-4">
-                            <h6 class="fw-bold mb-3">Filtros de Busca</h6>
-                            <div class="mb-3">
-                                <label class="form-label small fw-semibold">Pesquisar</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                    <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Nome, rua ou bairro...">
+        <!-- Acordeão para Dashboard e Filtros (Mobile-First) -->
+        <div class="accordion mb-4 no-print" id="dashboardAccordion">
+            <div class="accordion-item border-0 rounded-4 shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDashboard" aria-expanded="true" aria-controls="collapseDashboard">
+                        <i class="bi bi-speedometer2 me-2"></i> <strong>Dashboard & Filtros</strong>
+                    </button>
+                </h2>
+                <div id="collapseDashboard" class="accordion-collapse collapse show" data-bs-parent="#dashboardAccordion">
+                    <div class="accordion-body">
+                        <!-- Stats Grid -->
+                        <div class="row g-3 mb-4">
+                             <div class="col-6 col-md-3">
+                                <div class="text-center bg-light p-3 rounded-3">
+                                    <p class="small text-muted mb-1 fw-bold">Educação</p>
+                                    <h4 class="fw-bold mb-0" id="countEdu">0</h4>
                                 </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label small fw-semibold">Secretaria</label>
+                            <div class="col-6 col-md-3">
+                                <div class="text-center bg-light p-3 rounded-3">
+                                    <p class="small text-muted mb-1 fw-bold">Saúde</p>
+                                    <h4 class="fw-bold mb-0" id="countSaude">0</h4>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                               <div class="text-center bg-light p-3 rounded-3">
+                                    <p class="small text-muted mb-1 fw-bold">Social</p>
+                                    <h4 class="fw-bold mb-0" id="countSocial">0</h4>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="text-center bg-light p-3 rounded-3">
+                                    <p class="small text-muted mb-1 fw-bold">Outros</p>
+                                    <h4 class="fw-bold mb-0" id="countOutros">0</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart -->
+                        <div style="height: 250px;" class="mb-4">
+                            <canvas id="deptChart"></canvas>
+                        </div>
+
+                        <!-- Filter Inputs -->
+                        <div class="row g-2 align-items-center">
+                            <div class="col-12 col-md-6 mb-2">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar por nome ou rua...">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 mb-2">
                                 <select id="deptFilter" class="form-select">
                                     <option value="">Todas as Secretarias</option>
                                 </select>
                             </div>
-                            <button id="resetBtn" class="btn btn-primary w-100 py-2 fw-semibold">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Limpar Filtros
-                            </button>
                         </div>
                     </div>
                 </div>
-            </aside>
-
-            <!-- Main Content: Table -->
-            <main class="col-lg-8 col-xl-9">
-                <div class="card card-stat border-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width: 15%;">Secretaria</th>
-                                    <th style="width: 40%;">Unidade / Local</th>
-                                    <th style="width: 35%;">Endereço</th>
-                                    <th style="width: 10%;" class="text-center">Mapa</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <!-- JS Populates here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </main>
+            </div>
         </div>
+
+        <!-- Lista de Resultados -->
+        <div id="resultsList">
+            <!-- JS Populates here -->
+        </div>
+
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="assets/js/data.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==========================================
+        // BANCO DE DADOS UNIFICADO (Embutido para simplicidade)
+        // ==========================================
+        const rawData = [
+            // --- EDUCAÇÃO (88 itens) ---
+            { dept: "Educação", nome: "E.M. SEBASTIAO MENDES", end: "AV PAULISTA, 1135 ALTO BOA VISTA" },
+            { dept: "Educação", nome: "E.M. BOLIVAR DE ANDRADE", end: "RUA CECILIA MEIRELLES, 465 PLANALTO" },
+            { dept: "Educação", nome: "E.M. MARIA DE LOURDES PINHEIRO", end: "RUA PORTUGAL, 141 INDEPENDENCIA" },
+            { dept: "Educação", nome: "E.M. NEIDE MELO FRANCO", end: "RUA PEDRO RAMOS OLIVEIRA, 471 VILA ANALIA" },
+            { dept: "Educação", nome: "E.M. DU NARCISO", end: "AV PERIMETRAL, 4001 VILAGE II" },
+            { dept: "Educação", nome: "E.M. ALFREDO COUTINHO", end: "RUA SINVAL FROES, 263 CAMILO PRATES" },
+            { dept: "Educação", nome: "E.M. CELESTINO PEREIRA SALGADO", end: "RUA 19, 150 - JARDIM PRIMAVERA" },
+            { dept: "Educação", nome: "E.M. AFONSO SALGADO", end: "RUA ANTONIO LOPES DA SILVA, 712 - VILA ATLANTIDA" },
+            { dept: "Educação", nome: "E.M. GERALDO PEREIRA SOUZA", end: "RUA JOSEFINA CHAVES, S/N - SANTA LUCIA II" },
+            { dept: "Educação", nome: "E.M. PROF. EUNICE CARNEIRO", end: "RUA D, 300- JOSE CORREA MACHADO" },
+            { dept: "Educação", nome: "E.M. HILDA CARVALHO MENDES", end: "RUA ARGENTINA, 395 DR JOAO ALVES" },
+            { dept: "Educação", nome: "E.M.DR. JOAO VALE MAURICIO", end: "AV PERIMETRAL, 2300 - VILAGE I" },
+            { dept: "Educação", nome: "E.M.ROZENDA ZANES", end: "RUA D, 115 JARDIM PLANALTO" },
+            { dept: "Educação", nome: "E.M. MARIA SIMONE SOARES", end: "RUA ESPIRITO SANTO, 811 - ESPLANADA" },
+            { dept: "Educação", nome: "E.M. JAIR DE OLIVEIRA", end: "RUA CELESTINO PEREIRA, 320 - JARDIM ELDORADO" },
+            { dept: "Educação", nome: "E.M. EGIDIO CORDEIRO AQUINO", end: "AV:ALAMEDA DAS AMERICAS, 580 INDEPENDENCIA" },
+            { dept: "Educação", nome: "E.M. ALCIDES CARVALHO", end: "RUA DERMEVAL CAMPOS, 263 V. CRUZ" },
+            { dept: "Educação", nome: "CAIC AMERICO SOUTO", end: "RUA PENIEL, 314 - RAUL JOSE PEREIRA" },
+            { dept: "Educação", nome: "E.M. DONA VIDINHA PIRES", end: "RUA CRISANTINO ALMEIDA BOREM, 55 - VARGEM GRANDE" },
+            { dept: "Educação", nome: "E.M. ZIZINHA RIBEIRO", end: "RUA TRINTA E CINCO, 805 - SANTO AMARO" },
+            { dept: "Educação", nome: "E.M. ROTARY SÃO LUIZ", end: "RUA QUARENTA E CINCO, 385, CIDADE INDUSTRIAL" },
+            { dept: "Educação", nome: "E.M. DR MÁRIO RIBEIRO TOURINHO", end: "AV AMPERE, 27, LOURDES" },
+            { dept: "Educação", nome: "CAIC MARACANA", end: "AV. QUELUZ S/N MARACANA" },
+            { dept: "Educação", nome: "E.M. MESTRA FININHA", end: "RUA D 350 CIRO DOS ANJOS" },
+            { dept: "Educação", nome: "E.M.JASON CAETANO I", end: "RUA GERALDO BATISTA NUNES 30 SANTO ANTONIO" },
+            { dept: "Educação", nome: "E.M.JASON CAETANO II", end: "AV.LAURO DIAS DE SÁ Nº369 ST ANTONIO" },
+            { dept: "Educação", nome: "E.M.CRISANTINO BOREM", end: "RUA GUARANI, 375 NSA SRA GRACAS" },
+            { dept: "Educação", nome: "E.M.RUY LAGE", end: "RUA: J, 155 - PLANALTO 2" },
+            { dept: "Educação", nome: "E.M.IRMA BEATA", end: "RUA CINCO Nº158 CHIQUINHO GUIMARAES" },
+            { dept: "Educação", nome: "E.M. PROFª SÔNIA DE QUADROS", end: "RUA:FRANCISCO COUTINHO,457 AGUSTA MOTA" },
+            { dept: "Educação", nome: "CEMEI SÃO JUDAS", end: "RUA PADRE VIEIRA, 447 SÃO JUDAS" },
+            { dept: "Educação", nome: "CEMEI MANOEL CARIBE", end: "RUA GENTIL GONZAGA,201-CANELAS" },
+            { dept: "Educação", nome: "CEMEI HAMILTON LOPES", end: "AV FLORIANO NEIVA, 133 - SÃO JOAO" },
+            { dept: "Educação", nome: "CEMEI ELOIN LOPES SOUZA", end: "RUA: RUI DE ALBUQUERQUE Nº2.300-VILAGE DO LAGO" },
+            { dept: "Educação", nome: "CEMEI SÃO MARCOS", end: "RUA A, 112 - VILA ANALIA" },
+            { dept: "Educação", nome: "CEMEI RUTH TUPINAMBA", end: "RUA GENERAL CARNEIRO,485 -Centro" },
+            { dept: "Educação", nome: "CEMEI PE. ADERBAL", end: "RUA DERMEVAL CAMPOS, 483 - VERA CRUZ" },
+            { dept: "Educação", nome: "CEMEI PAULO FREIRE", end: "RUA O, 67 - VILAGE II" },
+            { dept: "Educação", nome: "CEMEI AMIGUINHOS DA VILA", end: "RUA 1º CENTENARIO, 17 -C.CAMARA" },
+            { dept: "Educação", nome: "CEMEI LUIZINHA GONCALVES", end: "RUA MAJOR SANTOS 442 V. ATLANTICA" },
+            { dept: "Educação", nome: "CEMEI PROF. MARIA CONC. COSTA", end: "RUA MONTE PLANO, 834 - CINTRA" },
+            { dept: "Educação", nome: "CEMEI PROF MARIA DORES RODRIGUES", end: "RUA 7 SETEMBRO S/N JOSE CORREA MACHADO" },
+            { dept: "Educação", nome: "CEMEI D. IVONE SILVEIRA", end: "RUA ENOR DE BRITO ,100 -MORADA SOL" },
+            { dept: "Educação", nome: "CEMEI MAJOR PRATES", end: "RUA LAURA PRATES, 54 M. PRATES" },
+            { dept: "Educação", nome: "CEMEI MONTEIRO LOBATO", end: "RUA DA DEMOCRACIA, 551 ALTEROSA" },
+            { dept: "Educação", nome: "CEMEI AMIGUINHOS DE JESUS", end: "AV LEONEL BEIRAO, 3317 - V. TELMA" },
+            { dept: "Educação", nome: "CEMEI Mª DE LOURDES (NOSSO LAR)", end: "RUA MARCOS PLINIO RIBEIRO, 202 SÃO JUDAS" },
+            { dept: "Educação", nome: "CEMEI PROF ANA LUCIA MOTA", end: "AV: INDEPENDÊNCIA, Nº4688 INDEPENDÊNCIA" },
+            { dept: "Educação", nome: "CEMEI PROF ELIZABETH SOARES", end: "AL.QUINTA DAS AMERICAS 71-Acácias" },
+            { dept: "Educação", nome: "CEMEI SÃO NORBERTO", end: "RUA ANTONIO FIGUEIREDO, 200 VILA OLIVEIRA" },
+            { dept: "Educação", nome: "CEMEI PROF IDOLETA MACIEL", end: "RUA MANOEL JOSE DA SILVA Nº438 STO ANTONIO" },
+            { dept: "Educação", nome: "CEMEI AMIGUINHOS DO ADELOUR", end: "RUA GEOVANE SOARES DA CRUZ, 609 LOURDES" },
+            { dept: "Educação", nome: "CEMEI ANINHA RIBEIRO", end: "AV:FRANCISCO RIBEIRO,S/N VILA EXPOSIÇÃO" },
+            { dept: "Educação", nome: "CEMEI SANTO AMARO", end: "RUA TRINTA E SEIS, S/N - SANTO AMARO" },
+            { dept: "Educação", nome: "CEMEI CASINHA FELIZ", end: "RUA ABEL SENA, 402 J. ELDORADO" },
+            { dept: "Educação", nome: "CEMEI DR MÁRIO RIBEIRO", end: "AV. PLANETÁRIA, 138, CIDADE INDUSTRIAL" },
+            { dept: "Educação", nome: "CEMEI NOVA VIDA", end: "AV JOÃO XXIII, 2015, STOS REIS" },
+            { dept: "Educação", nome: "CEMEI CANACY", end: "RUA : D, 173, VILA ATLANTIDA" },
+            { dept: "Educação", nome: "CEMEI MADRE PAULA ELIZABETH", end: "RUA SÃO JOÃO, 1400, T.SANTOS" },
+            { dept: "Educação", nome: "CEMEI NOSSA SRA CONCEIÇÃO", end: "RUA GERALDINO MACHADO, 677, VILA AUREA" },
+            { dept: "Educação", nome: "CEMEI DR IVAN LOPES", end: "RUA SÃO MARCELINO,Nº36 JD BRASIL" },
+            { dept: "Educação", nome: "CEMEI O BOM SAMARITANO", end: "RUA SEIS, Nº65 - SANTA LUCIA" },
+            { dept: "Educação", nome: "CEMEI ALEGRIA DE VIVER", end: "RUA ADAO GOMES FERREIRA, 884 RENASCENSA" },
+            { dept: "Educação", nome: "CEMEI BRANCA DE NEVE", end: "PÇA DA IGREJA, 85 SÃO GERALDO" },
+            { dept: "Educação", nome: "CEMEI MUNDO DA CRIANCA", end: "AV. QUELUZ S/N MARACANA" },
+            { dept: "Educação", nome: "CEMEI SOLAR DE JESUS", end: "AV. CORAÇÃO DE JESUS Nº1645 SÃO GERALDO" },
+            { dept: "Educação", nome: "CEMEI CRISTO REI", end: "RUA ELIS CHAMONE 380 CRISTO REI" },
+            { dept: "Educação", nome: "CEMEI SÃO FRANCISCO DE ASSIS", end: "RUA DO ACESSO Nº113 SÃO FRANCISCO DE ASSIS" },
+            { dept: "Educação", nome: "CEMEI DEP ANTONIO PIMENTA", end: "RUA MONTE PLANO S/Nº SANTA RITA" },
+            { dept: "Educação", nome: "CEMEI SANTA RAFAELA", end: "RUA FIRMINO FERREIRA, 53 STA RAFAELA" },
+            { dept: "Educação", nome: "CEMEI MEI MEI", end: "RUA PROF MARIA MACHADO, 297 SANTA RITA" },
+            { dept: "Educação", nome: "CEMEI ROSITA AQUINO (MONTE SIAO)", end: "RUA E Nº39 MONTE SIÃO IV" },
+            { dept: "Educação", nome: "CENTRO DE CONVIVIO CURIMIM", end: "AV 1, S/N - VILA ANALIA" },
+            { dept: "Educação", nome: "CEMEI PROF. HELOISA VELOSO ANJOS", end: "RUA: BENJAMIN DOS ANJOS Nº400 - MELO" },
+            { dept: "Educação", nome: "CEMEI CIDA CHELONE", end: "RUA VIUVA PACULDINO, 621- JARAGUA II" },
+            { dept: "Educação", nome: "CEMEI PROF RAIMUNDO NETO", end: "RUA: DOIS,159 -CHIQUINHO GUIMARAES" },
+            { dept: "Educação", nome: "CEMEI PROF Mª DE LOURDES", end: "RUA M ,205-NOVA AMÉRICA" },
+            { dept: "Educação", nome: "CEMEI VALDEIR C.MACHADO", end: "AV:F ,Nº461 -JARDIM PRIMAVERA" },
+            { dept: "Educação", nome: "CEMEI SÃO NORBERTO ANEXO", end: "RUA MARIA DA CONCEIÇÃO OLIVEIRA Nº55" },
+            { dept: "Educação", nome: "CEMEI PROF LUCIA PIMENTA", end: "AV:NECO DELFINO ,571-DELFINO MAGALHAES" },
+            { dept: "Educação", nome: "CEMEI PROFª ANA LUCIA MOTA", end: "RUA LAGOA CUMPRIDA 685 - CARMELO" },
+            { dept: "Educação", nome: "ALMOXARIFADO EDUCAÇÃO", end: "RUA CARLOS PAULINO CARDOSO, 401 VILA EXPOSICAO" },
+            { dept: "Educação", nome: "CAIC AMERICO SOUTO (AUDITORIO)", end: "AV PRINCIPAL, 314 - VILA EXPOSICAO" },
+            
+            // --- SAÚDE ---
+            { dept: "Saúde", nome: "CENTRO ZOONOSES LABORATÓRIO", end: "AV.ANTÔNIO LAFETÁ REBELLO Nº331" },
+            { dept: "Saúde", nome: "ACADEMIA DE SAUDE DELFINO", end: "RUA DA FELICIDADE S/Nº -DELFINO MAGALHÃES" },
+            { dept: "Saúde", nome: "CAPS AD", end: "RUA SEBASTIÃO 123-TODOS OS SANTOS" },
+            { dept: "Saúde", nome: "FARMACIA BASICA MERCADO CENTRAL", end: "RUA MARECHAL DEODORO Nº63-CENTRO" },
+            { dept: "Saúde", nome: "POLICLINICA DR. ARIOSTO MACHADO I", end: "RUA NELSON ALKIMIN Nº 120 - JD ALVORADA" },
+            { dept: "Saúde", nome: "UBS MAJOR PRATES", end: "RUA OLÍMPIO PRATES, N° 773" },
+            { dept: "Saúde", nome: "UBS MORRINHOS", end: "RUA MELO VIANA, N° 550" },
+
+            // --- SOCIAL ---
+            { dept: "Social", nome: "CRAS JK - VILLAGE II", end: "AV ANTONIO DE FREITAS, S/N VILLAGE II" },
+            { dept: "Social", nome: "CRAS MARACANA", end: "AV BRASILIA, 538 MARACANA" },
+            { dept: "Social", nome: "CREAS CENTRAL", end: "RUA TIRADENTES ,465 - CENTRO" },
+            { dept: "Social", nome: "CONSELHO TUTELAR", end: "RUA BENJAMIM DOS ANJOS N.º 533" },
+
+            // --- OUTRAS SECRETARIAS ---
+            { dept: "Planejamento", nome: "SALA GERENCIA INFORMATICA", end: "AV CULA MANGABEIRA, 211 CENTRO" },
+            { dept: "Meio Ambiente", nome: "PARQUE MILTON PRATES (SEDE)", end: "AV: PEDRO AUGUSTO VELOSO Nº 50" },
+            { dept: "Agricultura", nome: "CEANORTE (CASA AMARELA)", end: "AV: CEANORTE Nº 3597 - VILA TELMA" },
+            { dept: "Cultura", nome: "CENTRO CULTURAL HERMES DE PAULA", end: "PRAÇA DOUTOR CHAVES ,Nº 32" },
+            { dept: "Esporte", nome: "GINASIO POLIESPORTIVO", end: "AV: ANTÔNIO FERREIRA DE OLIVEIRA,S/N" },
+            { dept: "Serviços", nome: "CEMITÉRIO", end: "AV: LEONEL BEIRÃO DE JESUS,1620" }
+            // ... (Adicione os outros dados aqui para completar a lista)
+        ];
+
+        // ==========================================
+        // LÓGICA DO DASHBOARD
+        // ==========================================
+        const resultsList = document.getElementById('resultsList');
+        const searchInput = document.getElementById('searchInput');
+        const deptFilter = document.getElementById('deptFilter');
+        let chartInstance = null;
+
+        function init() {
+            // Popula Select de Secretarias
+            const uniqueDepts = [...new Set(rawData.map(d => d.dept))].sort();
+            uniqueDepts.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d;
+                deptFilter.appendChild(option);
+            });
+            updateDashboard(rawData);
+        }
+
+        function updateDashboard(data) {
+            // Atualiza Contadores
+            document.getElementById('totalBadge').innerText = data.length;
+            document.getElementById('countEdu').innerText = rawData.filter(d => d.dept === 'Educação').length;
+            document.getElementById('countSaude').innerText = rawData.filter(d => d.dept === 'Saúde').length;
+            document.getElementById('countSocial').innerText = rawData.filter(d => d.dept === 'Social').length;
+            document.getElementById('countOutros').innerText = rawData.filter(d => !['Educação','Saúde','Social'].includes(d.dept)).length;
+            
+            renderChart(rawData); // O gráfico sempre mostra o total
+            renderList(data);
+        }
+
+        function renderList(data) {
+            resultsList.innerHTML = "";
+            if (data.length === 0) {
+                resultsList.innerHTML = `<div class="text-center py-5 text-muted">
+                                            <i class="bi bi-exclamation-triangle fs-1"></i>
+                                            <p class="mt-2">Nenhum resultado encontrado.</p>
+                                         </div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                let badgeColor = "bg-secondary";
+                if(item.dept === "Educação") badgeColor = "bg-primary";
+                if(item.dept === "Saúde") badgeColor = "bg-success";
+                if(item.dept === "Social") badgeColor = "bg-warning text-dark";
+
+                const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.end + ', Montes Claros, MG')}`;
+
+                const cardHTML = `
+                    <div class="result-card d-flex align-items-center gap-3">
+                        <div class="flex-grow-1">
+                            <span class="badge ${badgeColor} mb-2">${item.dept}</span>
+                            <h6 class="card-title mb-1">${item.nome}</h6>
+                            <p class="card-address mb-0 d-flex align-items-center">
+                                <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
+                                ${item.end}
+                            </p>
+                        </div>
+                        <a href="${mapLink}" target="_blank" class="btn btn-primary map-button flex-shrink-0" title="Ver no Mapa">
+                            <i class="bi bi-map-fill"></i>
+                        </a>
+                    </div>`;
+                resultsList.innerHTML += cardHTML;
+            });
+        }
+
+        function renderChart(data) {
+            const counts = {};
+            data.forEach(d => { counts[d.dept] = (counts[d.dept] || 0) + 1; });
+            
+            const labels = Object.keys(counts);
+            const values = Object.values(counts);
+
+            if (chartInstance) chartInstance.destroy();
+
+            const ctx = document.getElementById('deptChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: ' Unidades',
+                        data: values,
+                        backgroundColor: [ '#0d6efd', '#198754', '#ffc107', '#6f42c1', '#fd7e14', '#20c997', '#dc3545', '#6c757d' ],
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                boxWidth: 12
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+        
+        function filterData() {
+            const term = searchInput.value.toLowerCase();
+            const dept = deptFilter.value;
+            const filtered = rawData.filter(item => {
+                const matchText = item.nome.toLowerCase().includes(term) || item.end.toLowerCase().includes(term);
+                const matchDept = dept === "" || item.dept === dept;
+                return matchText && matchDept;
+            });
+            renderList(filtered);
+            document.getElementById('totalBadge').innerText = filtered.length; // Atualiza o contador com o resultado do filtro
+        }
+
+        searchInput.addEventListener('input', filterData);
+        deptFilter.addEventListener('change', filterData);
+        
+        init();
+    </script>
 </body>
 </html>
